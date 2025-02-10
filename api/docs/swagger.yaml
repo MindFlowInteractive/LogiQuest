@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  title: LogiQuest API
+  description: Core API endpoints for LogiQuest
+  version: 1.0.0
+
+servers:
+  - url: /api
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: "********"
+
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        email:
+          type: string
+          example: "user@example.com"
+        username:
+          type: string
+          example: "puzzlemaster"
+
+    PuzzleDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "puzzle-123"
+        title:
+          type: string
+          example: "Logic Gate Challenge"
+        description:
+          type: string
+          example: "Solve the logic gate puzzle"
+        difficulty:
+          type: string
+          enum: [EASY, MEDIUM, HARD]
+          example: "MEDIUM"
+
+    ProgressDto:
+      type: object
+      properties:
+        puzzleId:
+          type: string
+          example: "puzzle-123"
+        completed:
+          type: boolean
+          example: true
+        score:
+          type: number
+          example: 100
+
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Bad Request"
+        errors:
+          type: array
+          items:
+            type: string
+          example: ["Invalid email format"]
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user:
+                    $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /puzzles:
+    get:
+      tags:
+        - Puzzles
+      summary: Get all puzzles
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of puzzles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PuzzleDto'
+
+  /puzzles/{id}:
+    get:
+      tags:
+        - Puzzles
+      summary: Get puzzle by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Puzzle details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PuzzleDto'
+        '404':
+          description: Puzzle not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /progress:
+    get:
+      tags:
+        - Progress
+      summary: Get user progress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User progress
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProgressDto'
+
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
