@@ -1,0 +1,24 @@
+# Ignore all files in the frontend (ReactJs app)
+frontend/.next/
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.test
+frontend/.env.production
+frontend/.cache
+frontend/.DS_Store
+frontend/build/
+frontend/coverage/
+frontend/public/static/
+
+# Ignore all files in the backend (NestJS app)
+backend/dist/
+backend/node_modules/
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.test
+backend/.env.production
+backend/.cache
+backend/.DS_Store
