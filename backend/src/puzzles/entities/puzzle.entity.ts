@@ -22,6 +22,9 @@ export class Puzzle {
     @Column({ type: "jsonb", nullable: true }) // 
     metadata: Record<string, any>;
 
-    @OneToMany(() => Step, step => step.puzzle)
+    @OneToMany(() => Step, (step) => step.puzzle)
     steps: Step[];
+
+    @Column()
+    category: string;
 }

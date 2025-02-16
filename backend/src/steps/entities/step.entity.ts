@@ -12,10 +12,13 @@ export class Step {
     @Column()
     order: number;
 
-    @Column('simple-array', { nullable: true })
+    @Column('text', { array: true, default: [], nullable: true })
     hints: string[];
 
-    @ManyToOne(() => Puzzle, puzzle => puzzle.steps)
+    @ManyToOne(() => Puzzle, (puzzle) => puzzle.steps)
     puzzle: Puzzle;
-}
+
+    @Column()
+    isCorrect?: boolean;
+}    
 

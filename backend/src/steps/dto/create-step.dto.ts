@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsArray } from 'class-validator';
+import { IsString, IsNumber, IsArray, IsBoolean } from 'class-validator';
 
 export class CreateStepDto {
   @IsString()
@@ -10,4 +10,7 @@ export class CreateStepDto {
   @IsArray()
   @IsString({ each: true })
   hints: string[];
+
+  @IsBoolean()
+  isCorrect?: boolean;
 }

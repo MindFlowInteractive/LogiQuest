@@ -27,4 +27,8 @@ export class CreatePuzzleDto {
   @ArrayMinSize(1)
   @Type(() => CreateStepDto)
   steps: CreateStepDto[];
+
+  @IsString()
+  category: string;
+
 }
