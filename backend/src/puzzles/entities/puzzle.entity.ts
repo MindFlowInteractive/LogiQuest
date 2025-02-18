@@ -19,7 +19,7 @@ export class Puzzle {
     @Column()
     points: number;
 
-    @Column({ type: "jsonb", nullable: true }) // 
+    @Column({ type: "jsonb", nullable: true }) 
     metadata: Record<string, any>;
 
     @OneToMany(() => Step, (step) => step.puzzle)

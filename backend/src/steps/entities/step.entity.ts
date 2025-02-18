@@ -18,7 +18,7 @@ export class Step {
     @ManyToOne(() => Puzzle, (puzzle) => puzzle.steps)
     puzzle: Puzzle;
 
-    @Column()
+    @Column({default: false})
     isCorrect?: boolean;
 }    
 

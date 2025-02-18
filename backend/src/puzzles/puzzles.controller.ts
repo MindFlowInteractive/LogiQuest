@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, NotFoundException} from '@nestjs/common';
 import { PuzzlesService } from './puzzles.service';
-import { CreatePuzzleDto } from './dto/create-puzzle.dto';
-import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { Puzzle } from './entities/puzzle.entity';
+import { Step } from 'src/steps/entities/step.entity';
 
 @Controller('puzzles')
 export class PuzzlesController {
-  constructor(private readonly puzzlesService: PuzzlesService) {}
-
-  @Post()
-  create(@Body() createPuzzleDto: CreatePuzzleDto) {
-    return this.puzzlesService.create(createPuzzleDto);
-  }
+  constructor(
+    private readonly puzzleService: PuzzlesService) {}
 
   @Get()
-  findAll() {
-    return this.puzzlesService.findAll();
+  async findAll(): Promise<{ puzzles: Puzzle[] }> {
+    const puzzles = await this.puzzleService.findAll();
+    return { puzzles };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.puzzlesService.findOne(+id);
+  @Get(':puzzleId')
+  async findOne(@Param('puzzleId') puzzleId: number): Promise<{ puzzle: Puzzle }> {
+    const puzzle = await this.puzzleService.findOne(puzzleId);
+    if (!puzzle) {
+      throw new NotFoundException(`Puzzle with ID ${puzzleId} not found`);
+    }
+    return { puzzle };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePuzzleDto: UpdatePuzzleDto) {
-    return this.puzzlesService.update(+id, updatePuzzleDto);
+  @Post()
+  async create(@Body() newPuzzle: Omit<Puzzle, 'id'>): Promise<{ puzzle: Puzzle }> {
+    const puzzle = await this.puzzleService.create(newPuzzle);
+    return { puzzle };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.puzzlesService.remove(+id);
+  @Post(':puzzleId/validate')
+  async validate(
+    @Param('puzzleId') puzzleId: number,
+    @Body() userSteps: Step[],
+  ): Promise<{ isValid: boolean; score: number }> {
+    const isValid = await this.puzzleService.validateStepOrder(puzzleId, userSteps);
+    const score = await this.puzzleService.calculateScore(puzzleId, userSteps);
+    return { isValid, score };
+  }
+
+  @Get(':puzzleId/:stepId/hint')
+  async getHint(
+    @Param('puzzleId') puzzleId: number,
+    @Param('stepId') stepId: number,
+  ): Promise<{ hint: string | null }> {
+    const hint = await this.puzzleService.getHint(puzzleId, stepId);
+    return { hint };
   }
 }
