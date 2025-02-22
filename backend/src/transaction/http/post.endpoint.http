@@ -1,0 +1,8 @@
+#Create a transaction 
+
+POST http://localhost:3000/transactions
+Content-Type: application/json 
+
+  {
+    
+  }

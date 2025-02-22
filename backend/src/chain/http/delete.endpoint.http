@@ -1,0 +1,2 @@
+# Delete a chain by it's ID 
+DELETE http://localhost:3000/chain/1

@@ -1,0 +1,3 @@
+
+#Deletes a puzzle
+DELETE http://localhost:3000/puzzles/1

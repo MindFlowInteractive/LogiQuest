@@ -1,0 +1,3 @@
+
+#Deletes a progress 
+DELETE http://localhost:3000/progress/1

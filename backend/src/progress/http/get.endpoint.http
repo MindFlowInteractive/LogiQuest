@@ -1,0 +1,8 @@
+
+#Get all progress
+GET http://localhost:3000/progress
+
+
+
+#Get a single progress by it's ID
+GET http://localhost:3000/progress/1

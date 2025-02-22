@@ -1,0 +1,8 @@
+
+
+#Update a puzzle
+PATCH http://localhost:3000/puzzles/1
+Content-Type: application/json
+{
+  
+}

@@ -1,0 +1,2 @@
+#Deletes an achievement by it's ID
+DELETE http://localhost:3000/achievements/1

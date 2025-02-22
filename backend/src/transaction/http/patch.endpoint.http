@@ -1,0 +1,3 @@
+#Update a transactions by it's ID
+
+PATCH http://localhost:3000/transactions/1

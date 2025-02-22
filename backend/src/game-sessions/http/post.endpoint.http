@@ -1,0 +1,8 @@
+
+#Post sessions
+POST http://localhost:3000/game-sessions
+Content-Type:application/json
+
+{
+   
+}

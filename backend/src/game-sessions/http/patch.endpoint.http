@@ -1,0 +1,9 @@
+
+
+#Update a game-session using it's ID 
+PATCH http://localhost:3000/game-sessions/1
+Content-Type:application/json
+
+{
+   
+}

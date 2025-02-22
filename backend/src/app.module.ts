@@ -8,7 +8,7 @@ import { StepsModule } from './steps/steps.module';
 import { GameSessionsModule } from './game-sessions/game-sessions.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProgressModule } from './progress/progress.module';
 import { ChainModule } from './chain/chain.module';
 import { DatabaseModule } from './database/database.module';

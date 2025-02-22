@@ -1,0 +1,8 @@
+
+#Updates a progress
+PATCH http://localhost:3000/progress/1
+Content-Type: application/json
+
+ {
+
+ }

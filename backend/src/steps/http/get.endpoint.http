@@ -1,0 +1,8 @@
+#Get all steps 
+GET http://localhost:3000/steps
+
+
+
+#Get a single step by an ID 
+
+GET http://localhost:3000/steps/1

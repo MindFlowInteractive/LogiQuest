@@ -1,0 +1,10 @@
+#Create a new chain
+POST http://localhost:3000/chain
+Content-Type:application/json
+
+{
+    " " : " ",
+    " " : " ",
+    " " : " ",
+    " " : " "
+}

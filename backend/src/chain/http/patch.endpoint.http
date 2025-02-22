@@ -1,0 +1,6 @@
+
+#Edit a single chains by it's ID
+PATCH http://localhost:3000/chain/1
+
+
+

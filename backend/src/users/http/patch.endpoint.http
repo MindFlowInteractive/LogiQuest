@@ -1,0 +1,8 @@
+#Update a specific user
+
+PATCH http://localhost:3000/users/1
+Content-Type: application:json 
+
+  {
+
+  }

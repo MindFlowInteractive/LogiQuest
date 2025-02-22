@@ -1,0 +1,8 @@
+
+#Get all puzzles
+GET http://localhost:3000/puzzles
+
+
+
+#Get a single  puzzles by it's ID
+GET http://localhost:3000/puzzles/1

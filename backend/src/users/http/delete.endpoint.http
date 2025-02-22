@@ -1,0 +1,2 @@
+#Delete a user  by his ID 
+DELETE http://localhost:3000/users/1

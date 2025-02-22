@@ -27,7 +27,7 @@ async function bootstrap() {
       "LogiQuest",
       "API endpoints for managing LogiQuest, steps, and progress",
     )
-    .build()
+    .build();
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup("api", app, document)
 

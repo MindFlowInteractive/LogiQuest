@@ -1,0 +1,7 @@
+#Create an achievement 
+POST http://localhost:3000/achievements
+Content-Type: application/json
+
+  {
+
+  }

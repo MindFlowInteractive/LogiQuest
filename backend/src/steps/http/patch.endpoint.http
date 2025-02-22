@@ -1,0 +1,8 @@
+#Update a step by it's ID
+
+PATCH http://localhost:3000/steps/1
+Content-Type: application/json 
+
+{
+
+}

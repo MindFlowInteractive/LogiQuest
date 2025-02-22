@@ -1,0 +1,8 @@
+#Get all chains
+GET http://localhost:3000/chain
+Authorization: Bearer
+
+
+#Get a single chain by it's ID 
+GET http://localhost:3000/chain/1
+Authorization: Bearer
