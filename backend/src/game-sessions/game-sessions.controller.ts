@@ -6,18 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Request,
 } from '@nestjs/common';
 import { GameSessionsService } from './game-sessions.service';
 import { CreateGameSessionDto } from './dto/create-game-session.dto';
-import { UpdateGameSessionDto } from './dto/update-game-session.dto';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+// import { UpdateGameSessionDto } from './dto/update-game-session.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @ApiTags('game-sessions')
 @Controller('game-sessions')
@@ -25,14 +20,15 @@ export class GameSessionsController {
   constructor(private readonly gameSessionsService: GameSessionsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new game session' })
-  @ApiResponse({
-    status: 201,
-    description: 'Game session successfully created',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiOperation({ summary: 'Create a new quiz game session' })
+  @ApiResponse({ status: 201, description: 'Game session created' })
   create(@Body() createGameSessionDto: CreateGameSessionDto, @Request() req) {
     createGameSessionDto.userId = req.user.id;
+    createGameSessionDto.correctAnswers = 0;
+    createGameSessionDto.incorrectAnswers = 0;
+    createGameSessionDto.answerHistory = [];
+    createGameSessionDto.lifelinesUsed = [];
+
     return this.gameSessionsService.create(createGameSessionDto);
   }
 
@@ -83,19 +79,18 @@ export class GameSessionsController {
     type: 'number',
     description: 'ID of the game session',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'Game session successfully updated',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 404, description: 'Game session not found' })
-  update(
-    @Param('id') id: string,
-    @Body() updateGameSessionDto: UpdateGameSessionDto,
-  ) {
-    return this.gameSessionsService.update(+id, updateGameSessionDto);
-  }
-
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Game session successfully updated',
+  // })
+  // @ApiResponse({ status: 400, description: 'Bad Request' })
+  // @ApiResponse({ status: 404, description: 'Game session not found' })
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateGameSessionDto: UpdateGameSessionDto,
+  // ) {
+  //   return this.gameSessionsService.update(+id, updateGameSessionDto);
+  // }
   @Post(':id/complete')
   @ApiOperation({ summary: 'Complete a game session' })
   @ApiParam({
@@ -126,5 +121,13 @@ export class GameSessionsController {
   @ApiResponse({ status: 404, description: 'Game session not found' })
   remove(@Param('id') id: string) {
     return this.gameSessionsService.remove(+id);
+  }
+
+  @Post(':id/answer')
+  @ApiOperation({ summary: 'Submit an answer for a quiz' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Game session ID' })
+  @ApiResponse({ status: 200, description: 'Answer processed' })
+  submitAnswer(@Param('id') id: string, @Body() answerDto: SubmitAnswerDto) {
+    return this.gameSessionsService.processAnswer(+id, answerDto);
   }
 }
