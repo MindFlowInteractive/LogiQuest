@@ -13,6 +13,7 @@ import { CreateGameSessionDto } from './dto/create-game-session.dto';
 // import { UpdateGameSessionDto } from './dto/update-game-session.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
+import { LifelineUsageDto } from './dto/lifeLineUsage.dto';
 
 @ApiTags('game-sessions')
 @Controller('game-sessions')
@@ -129,5 +130,13 @@ export class GameSessionsController {
   @ApiResponse({ status: 200, description: 'Answer processed' })
   submitAnswer(@Param('id') id: string, @Body() answerDto: SubmitAnswerDto) {
     return this.gameSessionsService.processAnswer(+id, answerDto);
+  }
+
+  @Post(':id/lifeline')
+  async useLifeline(
+    @Param('id') sessionId: number,
+    @Body() lifelineDto: LifelineUsageDto,
+  ) {
+    return this.gameSessionsService.trackLifelineUsage(sessionId, lifelineDto);
   }
 }
