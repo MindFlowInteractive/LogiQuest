@@ -1,12 +1,22 @@
-import { IsNumber, IsNotEmpty } from "class-validator"
+import { IsNumber, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateGameSessionDto {
   @IsNumber()
   @IsNotEmpty()
-  userId: number
+  userId: number;
 
   @IsNumber()
   @IsNotEmpty()
-  chainId: number
-}
+  chainId: number;
 
+  @IsNumber()
+  correctAnswers: number;
+
+  @IsNumber()
+  incorrectAnswers: number;
+
+  answerHistory: { questionId: number; answer: string; correct: boolean }[];
+
+  @IsString()
+  lifelinesUsed: string[];
+}

@@ -5,11 +5,13 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Puzzle } from 'src/puzzles/entities/puzzle.entity';
-
+import { AnswerHistory } from './answer-history.entity';
+import { LifelineUsage } from './lifeLineUsage.entity';
 
 @Entity()
 export class GameSession {
@@ -59,6 +61,18 @@ export class GameSession {
     example: 3,
   })
   attempts: number;
+
+  @Column({ default: 0 })
+  currectAnswers: number;
+
+  @Column({ default: 0 })
+  incorrectAnswers: number;
+
+  @OneToMany(() => AnswerHistory, (answerHistory) => answerHistory.gameSession)
+  answerHistory: AnswerHistory[];
+
+  @Column({ default: 0 })
+  lifeLineUsed: LifelineUsage[];
 
   @CreateDateColumn()
   @ApiProperty({
