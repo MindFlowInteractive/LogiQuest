@@ -6,6 +6,7 @@ import { GameSession } from "./entities/game-session.entity"
 import { User } from "../users/entities/user.entity"
 import { RedisConfigModule } from "src/redis/redis.module"
 import { Puzzle } from "src/puzzles/entities/puzzle.entity"
+import { ScoreService } from "./score.service"
 
 
 @Module({
@@ -14,7 +15,7 @@ import { Puzzle } from "src/puzzles/entities/puzzle.entity"
     ...(process.env.REDIS_ENABLED === 'true' ? [RedisConfigModule.register()] : []),
   ],
   controllers: [GameSessionsController],
-  providers: [GameSessionsService],
+  providers: [GameSessionsService, ScoreService],
   exports: [GameSessionsService],
 })
 export class GameSessionsModule {}
