@@ -5,6 +5,7 @@ import Layout from "../layout/Layout"
 import NotFound from "../pages/NotFound"
 import UnauthorizedResource from "../pages/UnauthorizedResource"
 import Home from '../pages/Home'
+import SignIn from "../pages/SignIn";
 // import ProtectedRoutes from "./ProtectedRoutes"
 // import Account from "../pages/Account"
 
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />
+            },
+            {
+                path: "signin",
+                element: <SignIn />
             },
             // {
             //     element: <PrivateRoutes />,
