@@ -6,9 +6,11 @@ export default {
       fontFamily: {
         prompt: ["font-prompt", "sans-serif"],
       },
-      backgroundColor:{
-        whychoseus:' rgba(3, 51, 48, 1)'
-      }
+      colors: {
+        'brand-primary-green': '#033330',
+        'brand-primary-yellow': '#F9BC07',
+        'brand-primary-white': '#fff',
+      },
     },
   },
   plugins: [],

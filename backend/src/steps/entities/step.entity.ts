@@ -33,7 +33,21 @@ export class Step {
     @Column('simple-array', { nullable: true })
     hints: string[];
 
+    @ApiProperty({
+        type: 'array',
+        description: 'Multiple options for the step',
+        items: { type: 'string' },
+    })
+    @Column('simple-array', { nullable: true })
+    options: string[];
+
+    @ApiProperty({
+        type: 'string',
+        description: 'Correct answer for the step',
+    })
+    @Column({ nullable: true })
+    correctAnswer: string;
+
     @ManyToOne(() => Puzzle, puzzle => puzzle.steps)
     puzzle: Puzzle;
 }
-

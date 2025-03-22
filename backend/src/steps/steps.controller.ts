@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { StepsService } from './steps.service';
-import { CreateStepDto } from './dto/create-step.dto';
+import { correctAnswerDTO, CreateStepDto } from './dto/create-step.dto';
 import { UpdateStepDto } from './dto/update-step.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
@@ -31,6 +31,16 @@ export class StepsController {
   @ApiResponse({ status: 404, description: 'Step not found.' })
   findOne(@Param('id') id: string) {
     return this.stepsService.findOne(+id);
+  }
+
+  @Post('get-answer')
+  @ApiOperation({ summary: 'Validate a step answer by id' })
+  @ApiResponse({ status: 200, description: 'Return the step.' })
+  @ApiResponse({ status: 404, description: 'Step not found.' })
+  correctAnswer(
+    @Body() payload: correctAnswerDTO
+  ) {
+    return this.stepsService.correctAnswer(payload);
   }
 
   @Patch(':id')

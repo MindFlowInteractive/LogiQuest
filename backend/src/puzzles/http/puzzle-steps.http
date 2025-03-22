@@ -1,0 +1,26 @@
+### Create a step with multiple options
+POST http://localhost:3000/steps
+Content-Type: application/json
+
+{
+  "id": 1,
+  "description": "What is the chemical formula for water?",
+  "order": 1,
+  "puzzleId": 1,
+  "options": ["H2O", "CO2", "NaCl", "O2"],
+  "correctAnswer": "H2O",
+  "hints": ["drink"]
+
+}
+
+### Retrieve the step to verify options were saved
+GET http://localhost:3000/steps/1
+
+### Test answer validation
+POST http://localhost:3000/steps/get-answer
+Content-Type: application/json
+
+{
+  "stepId": 90,
+  "answer": "H2O"
+}
