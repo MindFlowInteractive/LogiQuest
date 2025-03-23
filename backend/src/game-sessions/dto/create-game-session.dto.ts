@@ -1,4 +1,5 @@
 import { IsNumber, IsNotEmpty, IsString } from 'class-validator';
+import { LifelineUsage } from '../entities/lifeLineUsage.entity';
 
 export class CreateGameSessionDto {
   @IsNumber()
@@ -18,5 +19,5 @@ export class CreateGameSessionDto {
   answerHistory: { questionId: number; answer: string; correct: boolean }[];
 
   @IsString()
-  lifelinesUsed: string[];
+  lifelinesUsed: LifelineUsage[];
 }

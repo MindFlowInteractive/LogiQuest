@@ -14,3 +14,34 @@ Content-Type:application/json
    "startTime": "",
    "lastActive": ""
 }
+
+
+
+### Create new quiz session
+POST /api/game-sessions
+Content-Type: application/json
+
+{
+  "chainId": 1
+}
+
+### Submit correct answer
+POST /api/game-sessions/1/answer
+Content-Type: application/json
+
+{
+  "questionId": 1,
+  "answer": "H2O"
+}
+
+### Submit incorrect answer
+POST /api/game-sessions/1/answer
+Content-Type: application/json
+
+{
+  "questionId": 2,
+  "answer": "Wrong Answer"
+}
+
+### Check session progress
+GET /api/game-sessions/1

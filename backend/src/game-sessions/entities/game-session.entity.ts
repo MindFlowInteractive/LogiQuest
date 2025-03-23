@@ -1,14 +1,14 @@
+// game-session.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
-  ManyToOne,
   Column,
+  ManyToOne,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/users/entities/user.entity';
 import { Puzzle } from 'src/puzzles/entities/puzzle.entity';
 import { AnswerHistory } from './answer-history.entity';
 import { LifelineUsage } from './lifeLineUsage.entity';
@@ -16,75 +16,48 @@ import { LifelineUsage } from './lifeLineUsage.entity';
 @Entity()
 export class GameSession {
   @PrimaryGeneratedColumn()
-  @ApiProperty({ description: 'The unique identifier of the game session' })
   id: number;
 
-  @ManyToOne(() => User)
-  @ApiProperty({
-    description: 'The user associated with this game session',
-    type: () => User,
+  @ManyToOne(() => User, (user) => user.gameSessions, {
+    eager: true,
+    onDelete: 'CASCADE',
   })
   user: User;
 
-  @ManyToOne(() => Puzzle)
-  @ApiProperty({
-    description: 'The Puzzle being played in this session',
-    type: () => Puzzle,
-  })
+  @ManyToOne(() => Puzzle, { eager: true })
   puzzle: Puzzle;
 
-  @Column()
-  @ApiProperty({
-    description: 'The current step the user is on',
-    example: 2,
-  })
+  @Column({ default: 0 })
   currentStep: number;
 
-  @Column()
-  @ApiProperty({
-    description: 'The score achieved in this session',
-    example: 150,
-  })
+  @Column({ default: 0 })
   score: number;
 
-  @Column({ type: 'enum', enum: ['active', 'completed', 'abandoned'] })
-  @ApiProperty({
-    description: 'The current status of the game session',
-    enum: ['active', 'completed', 'abandoned'],
-    example: 'active',
-  })
-  status: 'active' | 'completed' | 'abandoned';
+  @Column({ default: 'active' })
+  status: string;
 
-  @Column()
-  @ApiProperty({
-    description: 'Number of attempts made in the session',
-    example: 3,
-  })
+  @Column({ default: 1 })
   attempts: number;
 
   @Column({ default: 0 })
-  currectAnswers: number;
+  correctAnswers: number;
 
   @Column({ default: 0 })
   incorrectAnswers: number;
 
-  @OneToMany(() => AnswerHistory, (answerHistory) => answerHistory.gameSession)
+  @OneToMany(() => AnswerHistory, (answer) => answer.gameSession, {
+    cascade: true,
+  })
   answerHistory: AnswerHistory[];
 
-  @Column({ default: 0 })
+  @OneToMany(() => LifelineUsage, (lifeline) => lifeline.session, {
+    cascade: true,
+  })
   lifeLineUsed: LifelineUsage[];
 
   @CreateDateColumn()
-  @ApiProperty({
-    description: 'The timestamp when the session started',
-    example: '2024-02-18T12:34:56.789Z',
-  })
-  startTime: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  @ApiProperty({
-    description: 'The last activity timestamp in the session',
-    example: '2024-02-18T14:20:10.123Z',
-  })
   lastActive: Date;
 }

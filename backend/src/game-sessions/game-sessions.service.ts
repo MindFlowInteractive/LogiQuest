@@ -2,36 +2,37 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Repository, MoreThanOrEqual } from 'typeorm';
+
 import { GameSession } from './entities/game-session.entity';
-import type { CreateGameSessionDto } from './dto/create-game-session.dto';
+import { CreateGameSessionDto } from './dto/create-game-session.dto';
+import { SubmitAnswerDto } from './dto/submit-answer.dto';
 import { User } from '../users/entities/user.entity';
-import { Logger } from '@nestjs/common';
-import { MoreThanOrEqual } from 'typeorm';
 import { Puzzle } from 'src/puzzles/entities/puzzle.entity';
 import { AnswerHistory } from './entities/answer-history.entity';
 import { LifelineUsage } from './entities/lifeLineUsage.entity';
-import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
 export class GameSessionsService {
   private readonly logger = new Logger(GameSessionsService.name);
-  // Simple in-memory cache as alternative to Redis
-  private sessionCache = new Map<
-    number,
-    { data: GameSession; timestamp: number }
-  >();
+  private sessionCache = new Map<number, { data: GameSession; timestamp: number }>();
 
   constructor(
     @InjectRepository(GameSession)
     private gameSessionRepository: Repository<GameSession>,
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
     @InjectRepository(Puzzle)
     private puzzleRepository: Repository<Puzzle>,
+
+    @InjectRepository(AnswerHistory)
+    private answerRepo: Repository<AnswerHistory>,
   ) {}
 
   private cacheGameSession(gameSession: GameSession): void {
@@ -41,10 +42,7 @@ export class GameSessionsService {
         timestamp: Date.now() + 3600000, // 1 hour expiration
       });
     } catch (error) {
-      this.logger.error(
-        `Failed to cache game session: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to cache game session: ${error.message}`, error.stack);
     }
   }
 
@@ -54,18 +52,10 @@ export class GameSessionsService {
       if (cached && cached.timestamp > Date.now()) {
         return cached.data;
       }
-
-      // Remove expired entry
-      if (cached) {
-        this.sessionCache.delete(id);
-      }
-
+      if (cached) this.sessionCache.delete(id);
       return null;
     } catch (error) {
-      this.logger.error(
-        `Failed to get cached game session: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to get cached game session: ${error.message}`, error.stack);
       return null;
     }
   }
@@ -94,13 +84,8 @@ export class GameSessionsService {
     await this.gameSessionRepository.delete(id);
   }
 
-  async update(
-    id: number,
-    updateData: Partial<GameSession>,
-  ): Promise<GameSession> {
-    const gameSession = await this.gameSessionRepository.findOne({
-      where: { id },
-    });
+  async update(id: number, updateData: Partial<GameSession>): Promise<GameSession> {
+    const gameSession = await this.gameSessionRepository.findOne({ where: { id } });
     if (!gameSession) {
       throw new NotFoundException(`GameSession with ID ${id} not found`);
     }
@@ -108,13 +93,12 @@ export class GameSessionsService {
     return this.gameSessionRepository.save(gameSession);
   }
 
-  async create(
-    createGameSessionDto: CreateGameSessionDto,
-  ): Promise<GameSession> {
+  async create(createGameSessionDto: CreateGameSessionDto): Promise<GameSession> {
     try {
       const user = await this.userRepository.findOne({
         where: { id: createGameSessionDto.userId },
       });
+
       const puzzle = await this.puzzleRepository.findOne({
         where: { id: createGameSessionDto.chainId },
       });
@@ -130,46 +114,38 @@ export class GameSessionsService {
         score: 0,
         status: 'active',
         attempts: 1,
+        correctAnswers: 0,
+        incorrectAnswers: 0,
       });
 
       const savedSession = await this.gameSessionRepository.save(gameSession);
-      await this.cacheGameSession(savedSession);
+      this.cacheGameSession(savedSession);
       return savedSession;
     } catch (error) {
-      this.logger.error(
-        `Failed to create game session: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to create game session: ${error.message}`, error.stack);
       throw new InternalServerErrorException('Failed to create game session');
     }
   }
 
   async findOne(id: number): Promise<GameSession> {
     try {
-      const cachedSession = await this.getCachedGameSession(id);
-      if (cachedSession) {
-        return cachedSession;
-      }
+      const cachedSession = this.getCachedGameSession(id);
+      if (cachedSession) return cachedSession;
 
       const gameSession = await this.gameSessionRepository.findOne({
         where: { id },
-        relations: ['user', 'chain'],
+        relations: ['user', 'puzzle', 'answerHistory'],
       });
 
       if (!gameSession) {
         throw new NotFoundException(`Game session with ID "${id}" not found`);
       }
 
-      await this.cacheGameSession(gameSession);
+      this.cacheGameSession(gameSession);
       return gameSession;
     } catch (error) {
-      this.logger.error(
-        `Failed to find game session: ${error.message}`,
-        error.stack,
-      );
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
+      this.logger.error(`Failed to find game session: ${error.message}`, error.stack);
+      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Failed to find game session');
     }
   }
@@ -188,71 +164,68 @@ export class GameSessionsService {
       for (const session of timedOutSessions) {
         session.status = 'abandoned';
         await this.gameSessionRepository.save(session);
-        // Remove from cache
         this.sessionCache.delete(session.id);
       }
 
-      this.logger.log(
-        `Handled timeouts for ${timedOutSessions.length} sessions`,
-      );
+      this.logger.log(`Handled timeouts for ${timedOutSessions.length} sessions`);
     } catch (error) {
-      this.logger.error(
-        `Failed to handle session timeouts: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to handle session timeouts: ${error.message}`, error.stack);
     }
   }
 
-  // Logic for tracking answer history
-  async trackAnswer(sessionId: number, answer: AnswerHistory) {
-    const session = await this.gameSessionRepository.findOne({
-      where: { id: sessionId },
-    });
-    session.answerHistory.push(answer);
-
-    if (answer.isCurrect) {
-      session.currectAnswers += 1;
-    } else {
-      session.incorrectAnswers += 1;
-    }
-
-    return this.gameSessionRepository.save(session);
-  }
-
-  // Logic for trackingLife Line Usage
   async trackLifelineUsage(sessionId: number, lifeline: LifelineUsage) {
-    const session = await this.gameSessionRepository.findOne({
-      where: { id: sessionId },
-    });
+    const session = await this.gameSessionRepository.findOne({ where: { id: sessionId } });
     session.lifeLineUsed.push(lifeline);
     return this.gameSessionRepository.save(session);
+  }
+
+  private async isAnswerCorrect(questionId: number, answerDto: SubmitAnswerDto): Promise<boolean> {
+    const puzzle = await this.puzzleRepository.findOne({ where: { id: questionId } });
+    if (!puzzle) throw new NotFoundException('Puzzle not found');
+    return puzzle.correctAnswer.trim().toLowerCase() === answerDto.answer.trim().toLowerCase();
   }
 
   async processAnswer(sessionId: number, answerDto: SubmitAnswerDto) {
     const session = await this.gameSessionRepository.findOne({
       where: { id: sessionId },
+      relations: ['answerHistory'],
     });
 
     if (!session) throw new NotFoundException('Game session not found');
 
-    const isCorrect = await this.processAnswer(answerDto.questionId, answerDto);
+    const isCorrect = await this.isAnswerCorrect(answerDto.questionId, answerDto);
 
-    session.answerHistory.push({
+    const answerRecord = this.answerRepo.create({
       questionId: answerDto.questionId,
       answerText: answerDto.answer,
       isCurrect: isCorrect,
-      id: 0,
-      gameSession: new GameSession(),
-      submittedAt: undefined,
+      submittedAt: new Date(),
+      gameSession: session,
     });
 
+    await this.answerRepo.save(answerRecord);
+
+    session.correctAnswers = session.correctAnswers || 0;
+    session.incorrectAnswers = session.incorrectAnswers || 0;
+    session.score = session.score || 0;
+
     if (isCorrect) {
-      session.currectAnswers += 1;
+      session.correctAnswers += 1;
+      session.score += 10; // Award 10 points for correct answer
     } else {
       session.incorrectAnswers += 1;
+      session.score -= 5; // Deduct 5 points for wrong answer
+      if (session.score < 0) session.score = 0; // Prevent negative score
     }
 
     await this.gameSessionRepository.save(session);
-    return { message: 'Answer submitted', correct: isCorrect };
+
+    return {
+      message: 'Answer submitted',
+      correct: isCorrect,
+      score: session.score,
+      correctAnswers: session.correctAnswers,
+      incorrectAnswers: session.incorrectAnswers,
+    };
   }
 }

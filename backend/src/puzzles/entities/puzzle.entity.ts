@@ -43,4 +43,5 @@ export class Puzzle {
     type: () => [Step],
   })
   steps: Step[];
+  questions: any;
 }

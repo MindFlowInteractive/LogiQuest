@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+// answer-history.entity.ts
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { GameSession } from './game-session.entity';
 
 @Entity()
@@ -6,9 +13,12 @@ export class AnswerHistory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @ManyToOne(() => GameSession, (session) => session.answerHistory, {
+    onDelete: 'CASCADE',
+  })
   gameSession: GameSession;
 
+  @Column()
   questionId: number;
 
   @Column()
@@ -17,6 +27,6 @@ export class AnswerHistory {
   @Column()
   isCurrect: boolean;
 
-  @Column()
+  @CreateDateColumn()
   submittedAt: Date;
 }

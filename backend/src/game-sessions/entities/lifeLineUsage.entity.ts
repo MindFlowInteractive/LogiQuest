@@ -1,3 +1,4 @@
+// lifeLineUsage.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -16,7 +17,7 @@ export class LifelineUsage {
   type: string; // Example: "50-50", "Ask the Audience"
 
   @CreateDateColumn()
-  usedAt: Date; // Timestamp when lifeline was used
+  usedAt: Date;
 
   @ManyToOne(() => GameSession, (session) => session.lifeLineUsed, {
     onDelete: 'CASCADE',
