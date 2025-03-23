@@ -12,3 +12,18 @@ Content-Type: application/json
     "unlockedAt": " "
 
   }
+
+  GET http://localhost:3000/achievements/users/me/achievements
+
+  GET http://localhost:3000/achievements/users/me/achievements/progress
+
+  GET http://localhost:3000/achievements/users/me/nfts
+
+POST http://localhost:3000/achievements/claim
+Content-Type: application/json
+
+{
+  "achievementId": 1
+}
+
+

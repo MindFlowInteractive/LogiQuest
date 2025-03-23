@@ -10,8 +10,12 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Puzzle } from 'src/puzzles/entities/puzzle.entity';
+
 import { AnswerHistory } from './answer-history.entity';
 import { LifelineUsage } from './lifeLineUsage.entity';
+
+import { AnswerRecord } from './anwser-record';
+
 
 @Entity()
 export class GameSession {
@@ -87,4 +91,40 @@ export class GameSession {
     example: '2024-02-18T14:20:10.123Z',
   })
   lastActive: Date;
+
+   // New fields
+   @Column()
+   @ApiProperty({
+    description: 'Number of attempts made in the session',
+    example: 3,
+  })
+   currentScore: number;
+
+   @Column('jsonb', { default: [] })
+   @ApiProperty({
+    description: 'Number of attempts made in the session',
+    example: 3,
+  })
+   answerHistory: AnswerRecord[];
+
+   @Column()
+   @ApiProperty({
+    description: 'Number of attempts made in the session',
+    example: 3,
+  })
+   streakCount: number;
+
+   @Column({ default: false })
+   @ApiProperty({
+    description: 'Number of attempts made in the session',
+    example: 3,
+  })
+   isCompleted: boolean;
+
+   @Column({ nullable: true })
+   @ApiProperty({
+    description: 'Number of attempts made in the session',
+    example: 3,
+  })
+   categoryId: string;
 }

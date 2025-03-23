@@ -1,3 +1,4 @@
+
 import {
   Injectable,
   NotFoundException,
@@ -16,6 +17,22 @@ import { AnswerHistory } from './entities/answer-history.entity';
 import { LifelineUsage } from './entities/lifeLineUsage.entity';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
+import { Injectable, NotFoundException, InternalServerErrorException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import type { Repository } from "typeorm";
+import { Cron, CronExpression } from "@nestjs/schedule";
+import { GameSession } from "./entities/game-session.entity";
+import type { CreateGameSessionDto } from "./dto/create-game-session.dto";
+import { User } from "../users/entities/user.entity";
+import { Logger } from "@nestjs/common";
+import { MoreThanOrEqual } from "typeorm";
+import { Puzzle } from "src/puzzles/entities/puzzle.entity";
+import { ScoreService } from "./score.service";
+import { AnswerRecord } from "./entities/anwser-record";
+import { Step } from "src/steps/entities/step.entity";
+
+
+
 @Injectable()
 export class GameSessionsService {
   private readonly logger = new Logger(GameSessionsService.name);
@@ -32,6 +49,9 @@ export class GameSessionsService {
     private userRepository: Repository<User>,
     @InjectRepository(Puzzle)
     private puzzleRepository: Repository<Puzzle>,
+    @InjectRepository(Step)
+    private stepRepository: Repository<Step>,
+    private scoreService: ScoreService
   ) {}
 
   private cacheGameSession(gameSession: GameSession): void {
@@ -106,11 +126,17 @@ export class GameSessionsService {
     }
     Object.assign(gameSession, updateData);
     return this.gameSessionRepository.save(gameSession);
+
   }
 
   async create(
     createGameSessionDto: CreateGameSessionDto,
   ): Promise<GameSession> {
+
+}
+
+  async create(createGameSessionDto: CreateGameSessionDto): Promise<GameSession> {
+
     try {
       const user = await this.userRepository.findOne({
         where: { id: createGameSessionDto.userId },
@@ -127,10 +153,18 @@ export class GameSessionsService {
         user,
         puzzle,
         currentStep: 0,
+
         score: 0,
         status: 'active',
         attempts: 1,
       });
+
+        currentScore: 0,
+        answerHistory: [],
+        streakCount: 0,
+        isCompleted: false
+      })
+
 
       const savedSession = await this.gameSessionRepository.save(gameSession);
       await this.cacheGameSession(savedSession);
@@ -202,6 +236,108 @@ export class GameSessionsService {
       );
     }
   }
+
+
+
+  async findGameSessionOne(id: number): Promise<GameSession> {
+    // Use a simple findOneBy instead of a complex query that might be referencing "chain"
+    const gameSession = await this.gameSessionRepository.findOneBy({ id });
+    
+    if (!gameSession) {
+      this.logger.error(`Failed to find game session: Game session with ID ${id} not found`);
+      throw new NotFoundException(`Game session with ID ${id} not found`);
+    }
+    
+    return gameSession;
+  }
+
+
+  async saveGameSession(gameSession: GameSession): Promise<GameSession> {
+    // Assuming you're using TypeORM
+    return this.gameSessionRepository.save(gameSession);
+  }
+
+  async submitAnswer(
+    gameSessionId: string,
+    stepId: number,
+    answer: string,
+    responseTime: number,
+  ): Promise<{
+    isCorrect: boolean;
+    pointsAwarded: number;
+    currentScore: number;
+    feedback?: string;
+  }> {
+    // Retrieve game session
+    const gameSession = await this.findGameSessionOne(parseInt(gameSessionId));
+    if (!gameSession) {
+      throw new NotFoundException(`Game session with ID ${gameSessionId} not found`);
+    }
+
+    // Get the correct step info
+    const step = await this.getStepInfo(stepId);
+    
+    // Check if the answer is correct
+    const isCorrect = this.checkAnswer(answer, step.correctAnswer);
+    
+    // Update streak
+    let streakCount = gameSession.streakCount || 0;
+    if (isCorrect) {
+      streakCount++;
+    } else {
+      streakCount = 0;
+    }
+    
+    // Calculate points
+    const pointsAwarded = this.scoreService.calculateScore(
+      isCorrect,
+      responseTime,
+      step.difficulty,
+      streakCount,
+    );
+    
+    // Create an answer record
+    const answerRecord: AnswerRecord = {
+      stepId,
+      answer,
+      isCorrect,
+      responseTime,
+      timestamp: new Date(),
+      pointsAwarded,
+    };
+    
+    // Update game session
+    gameSession.answerHistory = gameSession.answerHistory || [];
+    gameSession.answerHistory.push(answerRecord);
+    gameSession.currentScore = (gameSession.currentScore || 0) + pointsAwarded;
+    gameSession.streakCount = streakCount;
+    
+    // Save the updated game session
+    await this.saveGameSession(gameSession);
+    
+    return {
+      isCorrect,
+      pointsAwarded,
+      currentScore: gameSession.currentScore,
+      feedback: isCorrect && step.Feedback 
+    };
+  }
+
+  private checkAnswer(userAnswer: string, correctAnswer: string): boolean {
+    // Normalize and compare answers
+    return userAnswer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+  }
+
+  private async getStepInfo(stepId: number) {
+    const step = await this.stepRepository.findOne({ 
+      where: { id: stepId },
+      relations: ['puzzle'] // Include any needed relations
+    });
+    if (!step) throw new NotFoundException(`Step with ID ${stepId} not found`);
+    return step;
+  }
+}
+
 
   // Logic for tracking answer history
   async trackAnswer(sessionId: number, answer: AnswerHistory) {

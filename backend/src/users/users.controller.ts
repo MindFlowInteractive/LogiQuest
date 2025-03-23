@@ -20,11 +20,14 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { ProgressTrackingService } from 'src/progress/progess-tracking.service';
 
 @ApiTags('Users') // Groups this controller under "Users" in Swagger
-@Controller('users')
+@Controller('api/users')
 export class UserController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService,
+    private readonly progressTrackingServices: ProgressTrackingService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
@@ -102,5 +105,25 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'User not found' })
   deleteUser(@Param('id') id: string) {
     return this.usersService.deleteUser(id);
+  }
+
+  @Get(':me/progress/')
+  @ApiOperation({ summary: 'Get user progress statistics' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Returns overall user progress statistics',
+  })
+  async getTrackingUserProgress( @Param('me') me: string) {
+    return this.progressTrackingServices.getUserProgress(me);
+  }
+
+  @Get('me/categories/progress')
+  @ApiOperation({ summary: 'Get progress by category' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Returns progress statistics for each category',
+  })
+  async getCategoryProgress(userId: string) {
+    return this.progressTrackingServices.getCategoryProgress(userId);
   }
 }

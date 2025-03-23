@@ -50,4 +50,18 @@ export class Step {
 
     @ManyToOne(() => Puzzle, puzzle => puzzle.steps)
     puzzle: Puzzle;
+
+    @ApiProperty({
+        type: 'string',
+        description: 'diffculty for the step',
+    })
+    @Column({ nullable: true })
+    difficulty?: string;
+
+    @ApiProperty({
+        type: 'string',
+        description: 'feedback for the step',
+    })
+    @Column({ nullable: true })
+    Feedback?: string
 }
