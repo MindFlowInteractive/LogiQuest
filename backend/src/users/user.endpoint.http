@@ -1,0 +1,12 @@
+POST http://localhost:3000/users
+Content-Type:application/json;
+
+{
+  "username": "testUser",
+  "email": "testuser@gmail.com",
+  "password": "hashed@Password123",
+  "walletAddress": "0x1234567890abcdef",
+  "createdAt": "2025-03-24T16:00:00Z",
+  "updatedAt": "2025-03-24T16:00:00Z"
+}
+

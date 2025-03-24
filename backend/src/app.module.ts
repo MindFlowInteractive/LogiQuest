@@ -24,13 +24,10 @@ import { APP_GUARD } from '@nestjs/core';
       isGlobal: true,
 
       // Set the correct path for your environment file if needed
-      // envFilePath: '.env.development',
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      envFilePath: '.env.development',
       // validate: validateConfig, // Load environment variables
-      
     }),
 
-    
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

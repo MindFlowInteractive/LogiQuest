@@ -18,9 +18,8 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     @Inject(forwardRef(() => UsersService))
-    private readonly usersService: UsersService, // Ensure this service is properly injected
+    private readonly usersService: UsersService, //Ensure this service is properly injected
     private readonly configService: ConfigService,
-
   ) {}
 
   async register(registerDto: RegisterDto): Promise<RegisterDto> {
@@ -57,7 +56,10 @@ export class AuthService {
     const { refreshToken } = refreshTokenDto;
 
     try {
-      const decoded = jwt.verify(refreshToken, this.configService.get('JWT_REFRESH_SECRET')) as {
+      const decoded = jwt.verify(
+        refreshToken,
+        this.configService.get('JWT_REFRESH_SECRET'),
+      ) as {
         sub: string;
       };
       const userId = decoded.sub;

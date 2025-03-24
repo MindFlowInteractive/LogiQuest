@@ -30,6 +30,8 @@ export class Puzzle {
   })
   points: number;
 
+  correctAnswer: string;
+
   @Column({ type: 'jsonb', nullable: true })
   @ApiProperty({
     description: 'Additional information related to the puzzle',

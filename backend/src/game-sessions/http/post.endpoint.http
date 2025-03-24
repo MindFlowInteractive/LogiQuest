@@ -2,31 +2,33 @@
 #Post sessions
 POST http://localhost:3000/game-sessions
 Content-Type:application/json
-
 {
-   "id": "",
-   "user": "",
-   "chain": "",
-   "currentStep": "",
-   "score": "",
-   "status": "",
-   "attempts": "",
-   "startTime": "",
-   "lastActive": ""
+  "userId": 1,
+  "chainId": 1,
+  "currentStep": 1,
+  "score": 0,
+  "status": "active",
+  "attempts": 0,
+  "correctAnswers": 0,
+  "incorrectAnswers": 0,
+  "lifelinesUsed": "",
+  "createdAt": "2025-03-24T16:00:00Z",
+  "lastActive": "2025-03-24T16:00:00Z"
 }
 
 
 
 ### Create new quiz session
-POST /api/game-sessions
+POST http://localhost:3000/game-sessions
 Content-Type: application/json
 
 {
+  "userId":"",
   "chainId": 1
 }
 
 ### Submit correct answer
-POST /api/game-sessions/1/answer
+POST http://localhost:3000/api/game-sessions/1/answer
 Content-Type: application/json
 
 {
@@ -35,12 +37,12 @@ Content-Type: application/json
 }
 
 ### Submit incorrect answer
-POST /api/game-sessions/1/answer
+POST http://localhost:3000/game-sessions/1/answer
 Content-Type: application/json
 
 {
-  "questionId": 2,
-  "answer": "Wrong Answer"
+  "questionId": 1,
+  "answer": "H2O"
 }
 
 ### Check session progress
