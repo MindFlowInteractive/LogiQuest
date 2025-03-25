@@ -1,80 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { AchievementsService } from './achievements.service';
-import { CreateAchievementDto } from './dto/create-achievement.dto';
-import { UpdateAchievementDto } from './dto/update-achievement.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger'; // Importing Swagger decorators
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 
-@ApiTags('Achievements') // Grouping under "Achievements" tag
+@ApiTags('Achievements')
 @Controller('achievements')
 export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new achievement' })
-  @ApiBody({ type: CreateAchievementDto }) // Describes the body for the 'create' endpoint
-  @ApiResponse({ status: 201, description: 'Achievement successfully created.' })
-  @ApiResponse({ status: 400, description: 'Bad request, invalid data.' })
-  create(@Body() createAchievementDto: CreateAchievementDto) {
-    return this.achievementsService.create(createAchievementDto);
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'Get all achievements' })
+  @Get('users/me/achievements')
+  @ApiOperation({ summary: 'Fetch user achievements' })
   @ApiResponse({
     status: 200,
-    description: 'List of achievements',
-    isArray: true, // Indicates this returns an array of achievements
+    description: 'List of user achievements.',
+    isArray: true,
   })
-  findAll() {
-    return this.achievementsService.findAll();
+  async getUserAchievements() {
+    const userId = 1; // Mock user ID; replace with actual user context
+    return this.achievementsService.getUserAchievements(userId);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get an achievement by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the achievement' }) // Describes the parameter 'id'
+  @Get('users/me/achievements/progress')
+  @ApiOperation({ summary: 'Get progress toward all achievements for a user' })
   @ApiResponse({
     status: 200,
-    description: 'Achievement details',
+    description: 'Progress details for achievements.',
+    isArray: true,
   })
-  @ApiResponse({
-    status: 404,
-    description: 'Achievement not found',
-  })
-  findOne(@Param('id') id: string) {
-    return this.achievementsService.findOne(+id);
+  async getAchievementProgress() {
+    const userId = 1; // Mock user ID; replace with actual user context
+    return this.achievementsService.getAchievementProgress(userId);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update an achievement' })
-  @ApiParam({ name: 'id', description: 'The ID of the achievement to update' }) // Describes the parameter 'id'
-  @ApiBody({ type: UpdateAchievementDto }) // Describes the body for the 'update' endpoint
+  @Get('users/me/nfts')
+  @ApiOperation({ summary: 'View NFT rewards' })
   @ApiResponse({
     status: 200,
-    description: 'Achievement successfully updated',
+    description: 'List of NFTs received as achievement rewards.',
+    isArray: true,
   })
-  @ApiResponse({
-    status: 404,
-    description: 'Achievement not found',
-  })
-  update(
-    @Param('id') id: string,
-    @Body() updateAchievementDto: UpdateAchievementDto,
-  ) {
-    return this.achievementsService.update(+id, updateAchievementDto);
+  async getUserNFTs() {
+    const userId = 1; // Mock user ID; replace with actual user context
+    return this.achievementsService.getUserNFTs(userId);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete an achievement' })
-  @ApiParam({ name: 'id', description: 'The ID of the achievement to delete' }) // Describes the parameter 'id'
+  @Post('claim')
+  @ApiOperation({ summary: 'Claim an achievement' })
+  @ApiBody({ schema: { example: { achievementId: 1 } } })
   @ApiResponse({
     status: 200,
-    description: 'Achievement successfully deleted',
+    description: 'Achievement successfully claimed.',
   })
-  @ApiResponse({
-    status: 404,
-    description: 'Achievement not found',
-  })
-  remove(@Param('id') id: string) {
-    return this.achievementsService.remove(+id);
+  async claimAchievement(@Body('achievementId') achievementId: number) {
+    const userId = 1; // Mock user ID; replace with actual user context
+    return this.achievementsService.claimAchievement(userId, achievementId);
   }
 }

@@ -8,18 +8,28 @@ import { RedisConfigModule } from 'src/redis/redis.module';
 import { Puzzle } from 'src/puzzles/entities/puzzle.entity';
 import { AnswerHistory } from './entities/answer-history.entity';
 import { LifelineUsage } from './entities/lifeLineUsage.entity';
+import { ScoreService } from './score.service';
+import { Step } from 'src/steps/entities/step.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([GameSession, User, Puzzle, AnswerHistory, LifelineUsage]),
+    TypeOrmModule.forFeature([
+      GameSession,
+      User,
+      Puzzle,
+      AnswerHistory,
+      Step,
+      LifelineUsage,
+    ]),
     RedisConfigModule,
+
     // Conditionally import Redis
     ...(process.env.REDIS_ENABLED === 'true'
       ? [RedisConfigModule.register()]
       : []),
   ],
   controllers: [GameSessionsController],
-  providers: [GameSessionsService],
+  providers: [GameSessionsService, ScoreService],
   exports: [GameSessionsService],
 })
 export class GameSessionsModule {}

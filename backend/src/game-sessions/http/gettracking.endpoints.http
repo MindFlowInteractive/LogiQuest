@@ -1,0 +1,17 @@
+POST http://localhost:3002/game-sessions/1/answer
+Content-Type: application/json
+
+{
+  "stepId": 3,
+  "answer": "Jupiter",
+  "responseTime": 2.5
+}
+
+
+GET http://localhost:3002/game-sessions/game-session/1
+
+
+GET http://localhost:3002/api/users/1/progress/
+
+
+GET http://localhost:3002/api/users/me/categories/progress

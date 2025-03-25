@@ -1,6 +1,6 @@
 
 #Post sessions
-POST http://localhost:3000/game-sessions
+POST http://localhost:3002/game-sessions
 Content-Type:application/json
 {
   "userId": 1,

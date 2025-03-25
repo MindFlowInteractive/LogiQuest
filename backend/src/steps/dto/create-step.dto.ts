@@ -23,4 +23,29 @@ export class CreateStepDto {
   @IsArray()
   @IsString({ each: true })
   hints: string[];
+
+  @ApiProperty({
+    description: 'The available options for this step',
+    example: ['x = 1', 'x = 2', 'x = 3'],
+  })
+  @IsArray()
+  @IsString({ each: true })
+  options: string[];
+
+  @ApiProperty({
+    description: 'The correct answer from the options',
+    example: 'x = 1',
+  })
+  @IsString()
+  correctAnswer: string;
+}
+
+export class correctAnswerDTO{
+  @ApiProperty()
+  stepId: number;
+
+  @ApiProperty()
+  @IsString()
+  answer: string;
+
 }

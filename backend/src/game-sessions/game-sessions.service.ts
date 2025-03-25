@@ -19,7 +19,10 @@ import { LifelineUsage } from './entities/lifeLineUsage.entity';
 @Injectable()
 export class GameSessionsService {
   private readonly logger = new Logger(GameSessionsService.name);
-  private sessionCache = new Map<number, { data: GameSession; timestamp: number }>();
+  private sessionCache = new Map<
+    number,
+    { data: GameSession; timestamp: number }
+  >();
 
   constructor(
     @InjectRepository(GameSession)
@@ -42,7 +45,10 @@ export class GameSessionsService {
         timestamp: Date.now() + 3600000, // 1 hour expiration
       });
     } catch (error) {
-      this.logger.error(`Failed to cache game session: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to cache game session: ${error.message}`,
+        error.stack,
+      );
     }
   }
 
@@ -55,7 +61,10 @@ export class GameSessionsService {
       if (cached) this.sessionCache.delete(id);
       return null;
     } catch (error) {
-      this.logger.error(`Failed to get cached game session: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to get cached game session: ${error.message}`,
+        error.stack,
+      );
       return null;
     }
   }
@@ -84,8 +93,13 @@ export class GameSessionsService {
     await this.gameSessionRepository.delete(id);
   }
 
-  async update(id: number, updateData: Partial<GameSession>): Promise<GameSession> {
-    const gameSession = await this.gameSessionRepository.findOne({ where: { id } });
+  async update(
+    id: number,
+    updateData: Partial<GameSession>,
+  ): Promise<GameSession> {
+    const gameSession = await this.gameSessionRepository.findOne({
+      where: { id },
+    });
     if (!gameSession) {
       throw new NotFoundException(`GameSession with ID ${id} not found`);
     }
@@ -93,7 +107,9 @@ export class GameSessionsService {
     return this.gameSessionRepository.save(gameSession);
   }
 
-  async create(createGameSessionDto: CreateGameSessionDto): Promise<GameSession> {
+  async create(
+    createGameSessionDto: CreateGameSessionDto,
+  ): Promise<GameSession> {
     try {
       const user = await this.userRepository.findOne({
         where: { id: createGameSessionDto.userId },
@@ -111,6 +127,7 @@ export class GameSessionsService {
         user,
         puzzle,
         currentStep: 0,
+
         score: 0,
         status: 'active',
         attempts: 1,
@@ -122,7 +139,10 @@ export class GameSessionsService {
       this.cacheGameSession(savedSession);
       return savedSession;
     } catch (error) {
-      this.logger.error(`Failed to create game session: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create game session: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException('Failed to create game session');
     }
   }
@@ -144,7 +164,10 @@ export class GameSessionsService {
       this.cacheGameSession(gameSession);
       return gameSession;
     } catch (error) {
-      this.logger.error(`Failed to find game session: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to find game session: ${error.message}`,
+        error.stack,
+      );
       if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Failed to find game session');
     }
@@ -167,22 +190,37 @@ export class GameSessionsService {
         this.sessionCache.delete(session.id);
       }
 
-      this.logger.log(`Handled timeouts for ${timedOutSessions.length} sessions`);
+      this.logger.log(
+        `Handled timeouts for ${timedOutSessions.length} sessions`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to handle session timeouts: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to handle session timeouts: ${error.message}`,
+        error.stack,
+      );
     }
   }
 
   async trackLifelineUsage(sessionId: number, lifeline: LifelineUsage) {
-    const session = await this.gameSessionRepository.findOne({ where: { id: sessionId } });
+    const session = await this.gameSessionRepository.findOne({
+      where: { id: sessionId },
+    });
     session.lifeLineUsed.push(lifeline);
     return this.gameSessionRepository.save(session);
   }
 
-  private async isAnswerCorrect(questionId: number, answerDto: SubmitAnswerDto): Promise<boolean> {
-    const puzzle = await this.puzzleRepository.findOne({ where: { id: questionId } });
+  private async isAnswerCorrect(
+    questionId: number,
+    answerDto: SubmitAnswerDto,
+  ): Promise<boolean> {
+    const puzzle = await this.puzzleRepository.findOne({
+      where: { id: questionId },
+    });
     if (!puzzle) throw new NotFoundException('Puzzle not found');
-    return puzzle.correctAnswer.trim().toLowerCase() === answerDto.answer.trim().toLowerCase();
+    return (
+      puzzle.correctAnswer.trim().toLowerCase() ===
+      answerDto.answer.trim().toLowerCase()
+    );
   }
 
   async processAnswer(sessionId: number, answerDto: SubmitAnswerDto) {
@@ -193,7 +231,10 @@ export class GameSessionsService {
 
     if (!session) throw new NotFoundException('Game session not found');
 
-    const isCorrect = await this.isAnswerCorrect(answerDto.questionId, answerDto);
+    const isCorrect = await this.isAnswerCorrect(
+      answerDto.questionId,
+      answerDto,
+    );
 
     const answerRecord = this.answerRepo.create({
       questionId: answerDto.questionId,
