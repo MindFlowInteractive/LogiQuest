@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ### Submit correct answer
-POST http://api/game-sessions/1/answer
+POST /api/game-sessions/1/answer
 Content-Type: application/json
 
 {
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### Submit incorrect answer
-POST http://api/game-sessions/1/answer
+POST /api/game-sessions/1/answer
 Content-Type: application/json
 
 {

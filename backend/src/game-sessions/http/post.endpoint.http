@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ### Submit correct answer
-POST http://localhost:3000/api/game-sessions/1/answer
+POST /api/game-sessions/1/answer
 Content-Type: application/json
 
 {
