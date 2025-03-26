@@ -1,7 +1,10 @@
 #[starknet::contract]
 mod LogiQuest {
     use contract::interface::ILogiQuest;
-    use contract::types::{AidsAllowed, AidsUsed, GameMode, PlayerProgress, UserActivity, SessionDetails, AidUsageCounter, DailyActivityCounter};
+    use contract::types::{
+        AidsAllowed, AidsUsed, GameMode, PlayerProgress, UserActivity, SessionDetails,
+        AidUsageCounter, DailyActivityCounter
+    };
     use starknet::storage::{Map, StoragePointerReadAccess, StoragePointerWriteAccess};
     use starknet::{ContractAddress, get_caller_address, get_block_timestamp};
     use contract::utils::{entry_is_duplicate, contains_option, generate_random_list};
@@ -17,7 +20,10 @@ mod LogiQuest {
         initialize: bool,
         // New storage for user activity
         user_activity: Map<(ContractAddress, u8), UserActivity>, // (player, mode_id) -> activity
-        daily_challenge_activity: Map<(ContractAddress, u32), UserActivity>, // (player, day) -> daily challenge activity
+        claimed_base_reward: Map<(ContractAddress, u8), bool>,
+        daily_challenge_activity: Map<
+            (ContractAddress, u32), UserActivity
+        >, // (player, day) -> daily challenge activity
     }
 
     // Constants for game mode IDs
@@ -41,7 +47,7 @@ mod LogiQuest {
             // Calculate the reward multiplier based on decimal
             let reward_multiplier = if decimal > 0 {
                 // Example: if decimal is 2, multiplier is 100 (10^2)
-                // This is a basic implementation - for a more robust solution, 
+                // This is a basic implementation - for a more robust solution,
                 // you would calculate 10^decimal using a power function
                 let mut multiplier: u256 = 1;
                 let mut i: u8 = 0;
@@ -291,25 +297,33 @@ mod LogiQuest {
 
             // Get the game mode to check its properties
             let game_mode = self.game_modes.read(mode_id);
-            
+
+            // check/claim base rewards if not claimed already
+            self._claim_base_reward(player, mode_id, game_mode.base_reward);
+
             // Initialize or update activity
             if mode_id == DAILY_CHALLENGE_MODE {
                 // Special handling for Daily Challenge mode - track by day
                 assert(game_mode.is_daily, 'Mode not configured as daily');
-                
+
                 // Check if we have existing activity for this day
                 let mut activity = self._get_or_init_daily_activity(player, day, mode_id);
-                
+
                 // Update activity data
                 activity.sessions_completed += 1;
                 activity.total_score += session_details.score;
                 activity.total_time_spent += session_details.duration;
                 activity.last_session = session_details;
-                
+
+                //update player total score for the session
+                let current_rewards = self.player_total_rewards.read(player);
+                let session_score = session_details.score.into();
+                self.player_total_rewards.write(player, session_score + current_rewards);
+
                 // Update daily specific counters
                 activity.daily_activity.completed_sessions += 1;
                 activity.daily_activity.total_duration += session_details.duration;
-                
+
                 // Update aids usage
                 if aids_used.audience_poll {
                     activity.aid_usage.audience_poll_count += 1;
@@ -320,7 +334,7 @@ mod LogiQuest {
                 if aids_used.fifty_fifty {
                     activity.aid_usage.fifty_fifty_count += 1;
                 }
-                
+
                 // Update streak if session was completed successfully
                 if session_details.completed {
                     activity.current_streak += 1;
@@ -330,29 +344,35 @@ mod LogiQuest {
                 } else {
                     activity.current_streak = 0; // Reset streak on failure
                 }
-                
+
                 // Save the updated activity for this day
                 self.daily_challenge_activity.write((player, day), activity);
             } else {
                 // Standard handling for regular game modes - track by mode_id
-                
+
                 // Make sure we're not trying to use a non-daily mode with day parameter
                 if day > 0 {
                     assert(game_mode.is_daily, 'Mode not configured as daily');
                 }
-                
+
                 // Check if we have existing activity for this mode
                 let mut activity = self._get_or_init_activity(player, mode_id);
-                
+
                 // Update activity data
                 activity.sessions_completed += 1;
                 activity.total_score += session_details.score;
                 activity.total_time_spent += session_details.duration;
                 activity.last_session = session_details;
-                
+
+                //update player total score for the session
+                let current_rewards = self.player_total_rewards.read(player);
+                let session_score = session_details.score.into();
+                self.player_total_rewards.write(player, session_score + current_rewards);
+
+
                 // For non-daily modes, update the day in daily_activity for reference
                 activity.daily_activity.day = day;
-                
+
                 // Update aids usage
                 if aids_used.audience_poll {
                     activity.aid_usage.audience_poll_count += 1;
@@ -363,7 +383,7 @@ mod LogiQuest {
                 if aids_used.fifty_fifty {
                     activity.aid_usage.fifty_fifty_count += 1;
                 }
-                
+
                 // Update streak if session was completed successfully
                 if session_details.completed {
                     activity.current_streak += 1;
@@ -373,7 +393,7 @@ mod LogiQuest {
                 } else {
                     activity.current_streak = 0; // Reset streak on failure
                 }
-                
+
                 // Save the updated activity
                 self.user_activity.write((player, mode_id), activity);
             }
@@ -381,16 +401,14 @@ mod LogiQuest {
 
         // Get user activity for a specific game mode
         fn get_user_activity(
-            self: @ContractState, 
-            player: ContractAddress, 
-            mode_id: u8
+            self: @ContractState, player: ContractAddress, mode_id: u8
         ) -> UserActivity {
             // Ensure mode_id is valid
             assert(mode_id <= ENDLESS_MODE, 'Invalid game mode ID');
-            
+
             // Get the game mode to check its properties
             let _game_mode = self.game_modes.read(mode_id);
-            
+
             // Return user activity based on mode type
             if mode_id == DAILY_CHALLENGE_MODE {
                 // For Daily Challenge, return the latest day's activity
@@ -405,14 +423,14 @@ mod LogiQuest {
 
         // Get daily challenge activity for a specific day
         fn get_daily_challenge_activity(
-            self: @ContractState, 
-            player: ContractAddress, 
-            day: u32
+            self: @ContractState, player: ContractAddress, day: u32
         ) -> UserActivity {
             self.daily_challenge_activity.read((player, day))
         }
 
-        fn set_question_options(self: @ContractState, options: Span<felt252>, answer: felt252, randomize_order: bool) -> Span<felt252> {
+        fn set_question_options(
+            self: @ContractState, options: Span<felt252>, answer: felt252, randomize_order: bool
+        ) -> Span<felt252> {
             assert(options.len() == 4, 'Invalid number of options');
 
             // Check for duplicates
@@ -424,7 +442,7 @@ mod LogiQuest {
                 assert(!entry_is_duplicate(*options.at(i), options), 'Duplicate options');
                 i += 1;
             };
-            
+
             // Check that answer is present in options
             assert(contains_option(answer, options), 'Answer not in options');
 
@@ -452,13 +470,11 @@ mod LogiQuest {
     impl LogiQuestHelperImpl of LogiQuestHelperTrait {
         // Helper to get or initialize user activity
         fn _get_or_init_activity(
-            ref self: ContractState,
-            player: ContractAddress, 
-            mode_id: u8
+            ref self: ContractState, player: ContractAddress, mode_id: u8
         ) -> UserActivity {
             // Try to read existing activity
             let existing = self.user_activity.read((player, mode_id));
-            
+
             // Check if this is a new entry (sessions_completed will be 0 for new entries)
             if existing.sessions_completed == 0 {
                 // Initialize a new activity record
@@ -469,39 +485,29 @@ mod LogiQuest {
                     total_score: 0,
                     total_time_spent: 0,
                     last_session: SessionDetails {
-                        completed: false,
-                        timestamp: get_block_timestamp(),
-                        duration: 0,
-                        score: 0,
+                        completed: false, timestamp: get_block_timestamp(), duration: 0, score: 0,
                     },
                     aid_usage: AidUsageCounter {
-                        audience_poll_count: 0,
-                        call_friend_count: 0,
-                        fifty_fifty_count: 0,
+                        audience_poll_count: 0, call_friend_count: 0, fifty_fifty_count: 0,
                     },
                     current_streak: 0,
                     best_streak: 0,
                     daily_activity: DailyActivityCounter {
-                        completed_sessions: 0,
-                        total_duration: 0,
-                        day: 0,
+                        completed_sessions: 0, total_duration: 0, day: 0,
                     },
                 };
             }
-            
+
             existing
         }
-        
+
         // Helper to get or initialize daily challenge activity
         fn _get_or_init_daily_activity(
-            ref self: ContractState,
-            player: ContractAddress, 
-            day: u32,
-            mode_id: u8
+            ref self: ContractState, player: ContractAddress, day: u32, mode_id: u8
         ) -> UserActivity {
             // Try to read existing activity for this day
             let existing = self.daily_challenge_activity.read((player, day));
-            
+
             // Check if this is a new entry
             if existing.sessions_completed == 0 {
                 // Initialize a new activity record for this day
@@ -512,29 +518,34 @@ mod LogiQuest {
                     total_score: 0,
                     total_time_spent: 0,
                     last_session: SessionDetails {
-                        completed: false,
-                        timestamp: get_block_timestamp(),
-                        duration: 0,
-                        score: 0,
+                        completed: false, timestamp: get_block_timestamp(), duration: 0, score: 0,
                     },
                     aid_usage: AidUsageCounter {
-                        audience_poll_count: 0,
-                        call_friend_count: 0,
-                        fifty_fifty_count: 0,
+                        audience_poll_count: 0, call_friend_count: 0, fifty_fifty_count: 0,
                     },
                     current_streak: 0,
                     best_streak: 0,
                     daily_activity: DailyActivityCounter {
-                        completed_sessions: 0,
-                        total_duration: 0,
-                        day,
+                        completed_sessions: 0, total_duration: 0, day,
                     },
                 };
             }
-            
+
             existing
         }
-        
+
+        fn _claim_base_reward(
+            ref self: ContractState, player: ContractAddress, mode_id: u8, base_reward: u256
+        ) {
+            let claimed: bool = self.claimed_base_reward.read((player, mode_id));
+            if !claimed {
+                let current_rewards = self.player_total_rewards.read(player);
+                self.player_total_rewards.write(player,current_rewards + base_reward);
+
+                self.claimed_base_reward.write((player, mode_id), true);
+            }
+        }
+
         // Helper to get current day
         fn _get_current_day(self: @ContractState) -> u32 {
             // In a real implementation, this would calculate the current day
