@@ -345,12 +345,14 @@ fn test_claim_base_reward_on_first_activity() {
             0, // day is not relevant for Classic mode
         );
 
-        let session_score = session_details.score.into();
-        let rewards = dispatcher.get_player_rewards(player);
-        assert!(rewards == (expected_reward + session_score), "Base reward should be added on first activity");
-        stop_cheat_caller_address(contract_address);
-    }
-
+    let session_score = session_details.score.into();
+    let rewards = dispatcher.get_player_rewards(player);
+    assert!(
+        rewards == (expected_reward + session_score),
+        "Base reward should be added on first activity"
+    );
+    stop_cheat_caller_address(contract_address);
+}
 
 
 #[test]
@@ -387,17 +389,20 @@ fn test_claim_base_reward_not_claimed_twice() {
             1, // day is not relevant for Classic mode
         );
 
-        let session_score = session_details.score.into();
-        let rewards_after_first = dispatcher.get_player_rewards(player);
-        assert!(rewards_after_first == expected_reward + session_score, "Base reward should be added on first activity");
+    let session_score = session_details.score.into();
+    let rewards_after_first = dispatcher.get_player_rewards(player);
+    assert!(
+        rewards_after_first == expected_reward + session_score,
+        "Base reward should be added on first activity"
+    );
 
-        let session_details_2 = SessionDetails {
-            completed: true,
-            timestamp: 1001000, // Some dummy timestamp
-            duration: 150, // 2 minutes
-            score: 75,
-        };
-        dispatcher
+    let session_details_2 = SessionDetails {
+        completed: true,
+        timestamp: 1001000, // Some dummy timestamp
+        duration: 150, // 2 minutes
+        score: 75,
+    };
+    dispatcher
         .update_user_activity(
             player,
             DAILY_CHALLENGE_MODE,
@@ -406,13 +411,15 @@ fn test_claim_base_reward_not_claimed_twice() {
             1, // day is not relevant for Classic mode
         );
 
-        let session2_score = session_details_2.score.into();
-        let rewards_after_second = dispatcher.get_player_rewards(player);
-        assert!(rewards_after_second == expected_reward + session2_score + session_score, "Base reward should not be added again");
+    let session2_score = session_details_2.score.into();
+    let rewards_after_second = dispatcher.get_player_rewards(player);
+    assert!(
+        rewards_after_second == expected_reward + session2_score + session_score,
+        "Base reward should not be added again"
+    );
 
-        stop_cheat_caller_address(contract_address);
-    }
-
+    stop_cheat_caller_address(contract_address);
+}
 
 
 #[test]
@@ -446,17 +453,20 @@ fn test_claim_base_reward_per_mode() {
             0, // day is not relevant for Classic mode
         );
 
-        let session1_score = session1_details.score.into();
-        let rewards_after_classic = dispatcher.get_player_rewards(player);
-        assert!(rewards_after_classic == classic_mode.base_reward + session1_score, "Only classic reward should be added");
+    let session1_score = session1_details.score.into();
+    let rewards_after_classic = dispatcher.get_player_rewards(player);
+    assert!(
+        rewards_after_classic == classic_mode.base_reward + session1_score,
+        "Only classic reward should be added"
+    );
 
-        let session2_details = SessionDetails {
-            completed: true,
-            timestamp: 1001000, // Some dummy timestamp
-            duration: 60, // 1 minute
-            score: 95,
-        };
-        dispatcher
+    let session2_details = SessionDetails {
+        completed: true,
+        timestamp: 1001000, // Some dummy timestamp
+        duration: 60, // 1 minute
+        score: 95,
+    };
+    dispatcher
         .update_user_activity(
             player,
             CHALLENGE_MODE,
@@ -465,14 +475,14 @@ fn test_claim_base_reward_per_mode() {
             0, // day is not relevant for Classic mode
         );
 
-        let session2_score = session2_details.score.into();
-        let session_scores = session1_score + session2_score;
-        let rewards_after_challenge = dispatcher.get_player_rewards(player);
-        let expected_total = classic_mode.base_reward + challenge_mode.base_reward + session_scores;
-        assert!(rewards_after_challenge == expected_total, "Both rewards should be added");
+    let session2_score = session2_details.score.into();
+    let session_scores = session1_score + session2_score;
+    let rewards_after_challenge = dispatcher.get_player_rewards(player);
+    let expected_total = classic_mode.base_reward + challenge_mode.base_reward + session_scores;
+    assert!(rewards_after_challenge == expected_total, "Both rewards should be added");
 
-        stop_cheat_caller_address(contract_address);
-    }
+    stop_cheat_caller_address(contract_address);
+}
 
 
 #[test]
@@ -551,7 +561,7 @@ fn test_set_question_options() {
     // Try to get an invalid game mode (there are only 8 modes, from 0 to 7)
     let options = array!['test option', 'test option 2', 'another option', 'option 4'];
     let new_questions = dispatcher.set_question_options(options.span(), 'test option', true);
-    
+
     // // Check that questions order was shuffled
     // assert(*new_questions.at(0) != *options.at(0), 'Same option in 0');
     // assert(*new_questions.at(0) != *options.at(0), 'Same option in 0');
@@ -562,7 +572,7 @@ fn test_set_question_options() {
 
     ///@dev After editing the update_user_activity fn, this test began to fail.
     ///@dev I believe this is because of the randomization applied to the 'options' array.
-    ///@dev So I thought since the options are random, the best approach is to confirm their 
+    ///@dev So I thought since the options are random, the best approach is to confirm their
     ///@dev presence for each question... which is done below.
 
     assert(contains_option('test option', new_questions), 'Option 1 missing');
@@ -575,7 +585,9 @@ fn test_set_question_options() {
     let mut changed = false;
     let mut i = 0;
     loop {
-    if i == 4 { break; }
+        if i == 4 {
+            break;
+        }
         if *new_questions.at(i) != *options.at(i) {
             changed = true;
             break;

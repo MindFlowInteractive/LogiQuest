@@ -369,7 +369,6 @@ mod LogiQuest {
                 let session_score = session_details.score.into();
                 self.player_total_rewards.write(player, session_score + current_rewards);
 
-
                 // For non-daily modes, update the day in daily_activity for reference
                 activity.daily_activity.day = day;
 
@@ -540,7 +539,7 @@ mod LogiQuest {
             let claimed: bool = self.claimed_base_reward.read((player, mode_id));
             if !claimed {
                 let current_rewards = self.player_total_rewards.read(player);
-                self.player_total_rewards.write(player,current_rewards + base_reward);
+                self.player_total_rewards.write(player, current_rewards + base_reward);
 
                 self.claimed_base_reward.write((player, mode_id), true);
             }
