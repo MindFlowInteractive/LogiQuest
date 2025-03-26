@@ -228,7 +228,7 @@ fn test_user_activity_tracking() {
     assert(activity.aid_usage.audience_poll_count == 1, 'Bad poll count');
     assert(activity.aid_usage.call_friend_count == 0, 'Bad call count');
     assert(activity.aid_usage.fifty_fifty_count == 1, 'Bad 50/50 count');
-    
+
     // Create second session details (failed this time)
     let session_details_2 = SessionDetails {
         completed: false,
@@ -236,17 +236,10 @@ fn test_user_activity_tracking() {
         duration: 90, // 1.5 minutes
         score: 40,
     };
-    
+
     // Update activity again with a failed session
-    dispatcher
-        .update_user_activity(
-            player,
-            CLASSIC_MODE,
-            session_details_2,
-            aids_used,
-            0, 
-        );
-    
+    dispatcher.update_user_activity(player, CLASSIC_MODE, session_details_2, aids_used, 0,);
+
     // Get and verify updated activity
     let updated_activity = dispatcher.get_user_activity(player, CLASSIC_MODE);
     assert(updated_activity.sessions_completed == 2, 'Bad sessions');
@@ -255,27 +248,19 @@ fn test_user_activity_tracking() {
     assert(updated_activity.current_streak == 0, 'Bad streak reset');
     assert(updated_activity.best_streak == 1, 'Bad best streak');
     assert(updated_activity.aid_usage.audience_poll_count == 2, 'Bad poll count');
-    
+
     // Test Daily Challenge mode activity tracking
     let daily_session = SessionDetails {
-        completed: true,
-        timestamp: 1002000,
-        duration: 180,
-        score: 95,
+        completed: true, timestamp: 1002000, duration: 180, score: 95,
     };
-    
+
     let daily_aids = AidsUsed { audience_poll: false, call_friend: false, fifty_fifty: true, };
-    
+
     // Update daily challenge activity
     dispatcher
-        .update_user_activity(
-            player,
-            DAILY_CHALLENGE_MODE,
-            daily_session,
-            daily_aids,
-            1, // day 1
+        .update_user_activity(player, DAILY_CHALLENGE_MODE, daily_session, daily_aids, 1, // day 1
         );
-    
+
     // Get and verify daily challenge activity
     let daily_activity = dispatcher.get_daily_challenge_activity(player, 1);
     assert(daily_activity.player == player, 'Bad player');
@@ -285,24 +270,17 @@ fn test_user_activity_tracking() {
     assert(daily_activity.daily_activity.day == 1, 'Bad day');
     assert(daily_activity.daily_activity.completed_sessions == 1, 'Bad completed');
     assert(daily_activity.aid_usage.fifty_fifty_count == 1, 'Bad 50/50');
-    
+
     // Add another session on the same day
     let daily_session_2 = SessionDetails {
-        completed: true,
-        timestamp: 1003000,
-        duration: 150,
-        score: 80,
+        completed: true, timestamp: 1003000, duration: 150, score: 80,
     };
-    
+
     dispatcher
         .update_user_activity(
-            player,
-            DAILY_CHALLENGE_MODE,
-            daily_session_2,
-            daily_aids,
-            1, // still day 1
+            player, DAILY_CHALLENGE_MODE, daily_session_2, daily_aids, 1, // still day 1
         );
-    
+
     // Verify multiple sessions in the same day are tracked correctly
     let updated_daily = dispatcher.get_daily_challenge_activity(player, 1);
     assert(updated_daily.sessions_completed == 2, 'Bad sessions');
@@ -310,24 +288,16 @@ fn test_user_activity_tracking() {
     assert(updated_daily.daily_activity.completed_sessions == 2, 'Bad completed');
     assert(updated_daily.current_streak == 2, 'Bad streak');
     assert(updated_daily.best_streak == 2, 'Bad best streak');
-    
+
     // Test different day tracking
     let day2_session = SessionDetails {
-        completed: true,
-        timestamp: 1090000,
-        duration: 200,
-        score: 100,
+        completed: true, timestamp: 1090000, duration: 200, score: 100,
     };
-    
+
     dispatcher
-        .update_user_activity(
-            player,
-            DAILY_CHALLENGE_MODE,
-            day2_session,
-            daily_aids,
-            2, // day 2
+        .update_user_activity(player, DAILY_CHALLENGE_MODE, day2_session, daily_aids, 2, // day 2
         );
-    
+
     // Verify day 2 activity
     let day2_activity = dispatcher.get_daily_challenge_activity(player, 2);
     assert(day2_activity.sessions_completed == 1, 'Bad day2 session');
@@ -517,15 +487,10 @@ fn test_daily_validation() {
 
     // Start pranking to simulate the player
     start_cheat_caller_address(contract_address, player);
-    
+
     // Try to update a non-daily mode as if it was a daily mode
-    let session = SessionDetails {
-        completed: true,
-        timestamp: 1000000,
-        duration: 120,
-        score: 85,
-    };
-    
+    let session = SessionDetails { completed: true, timestamp: 1000000, duration: 120, score: 85, };
+
     // This should fail because we're trying to use CLASSIC_MODE with DAILY_CHALLENGE_MODE ID
     dispatcher
         .update_user_activity(

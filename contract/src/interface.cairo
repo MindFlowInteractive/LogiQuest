@@ -15,7 +15,7 @@ pub trait ILogiQuest<TContractState> {
         rewards_earned: u256,
     );
     fn get_player_rewards(self: @TContractState, player: ContractAddress) -> u256;
-    
+
     // New functions for user activity tracking
     fn update_user_activity(
         ref self: TContractState,
@@ -26,15 +26,13 @@ pub trait ILogiQuest<TContractState> {
         day: u32,
     );
     fn get_user_activity(
-        self: @TContractState, 
-        player: ContractAddress, 
-        mode_id: u8
+        self: @TContractState, player: ContractAddress, mode_id: u8
     ) -> UserActivity;
     fn get_daily_challenge_activity(
-        self: @TContractState, 
-        player: ContractAddress, 
-        day: u32
+        self: @TContractState, player: ContractAddress, day: u32
     ) -> UserActivity;
 
-    fn set_question_options(self: @TContractState, options: Span<felt252>, answer: felt252, randomize_order: bool) -> Span<felt252>;
+    fn set_question_options(
+        self: @TContractState, options: Span<felt252>, answer: felt252, randomize_order: bool
+    ) -> Span<felt252>;
 }

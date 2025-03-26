@@ -44,14 +44,14 @@ pub struct PlayerProgress {
 pub struct SessionDetails {
     pub completed: bool,
     pub timestamp: u64,
-    pub duration: u32,  // in seconds
+    pub duration: u32, // in seconds
     pub score: u32,
 }
 
 #[derive(Copy, Drop, Serde, starknet::Store)]
 pub struct DailyActivityCounter {
     pub completed_sessions: u32,
-    pub total_duration: u32,  // in seconds
+    pub total_duration: u32, // in seconds
     pub day: u32,
 }
 
@@ -68,10 +68,29 @@ pub struct UserActivity {
     pub mode_id: u8,
     pub sessions_completed: u32,
     pub total_score: u32,
-    pub total_time_spent: u32,  // in seconds
+    pub total_time_spent: u32, // in seconds
     pub last_session: SessionDetails,
     pub aid_usage: AidUsageCounter,
     pub current_streak: u32,
     pub best_streak: u32,
-    pub daily_activity: DailyActivityCounter,  // used for daily challenge mode
+    pub daily_activity: DailyActivityCounter, // used for daily challenge mode
+}
+
+#[derive(Copy, Drop, Serde, starknet::Store)]
+pub struct Option {
+    pub label: felt252,
+    pub text: felt252,
+    pub is_correct: bool,
+}
+
+#[derive(Copy, Drop, Serde, starknet::Store)]
+pub struct Question {
+    pub level: u32,
+    pub reward: u256,
+    pub question_text: felt252,
+    pub option_a: Option,
+    pub option_b: Option,
+    pub option_c: Option,
+    pub option_d: Option,
+    pub correct_option_index: u8,
 }

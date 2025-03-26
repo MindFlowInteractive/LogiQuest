@@ -8,4 +8,5 @@ pub mod random;
 #[cfg(test)]
 pub mod tests {
     pub mod test_logiquest;
+    pub mod test_question;
 }
