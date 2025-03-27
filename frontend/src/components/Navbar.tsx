@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import { signOut } from "../services/auth/GoogleAuthService";
+// import useAuth from "../hooks/useAuth";
+// import { signOut } from "../services/auth/GoogleAuthService";
 
 const navItems = [
   { label: 'Game Modes', href: '/game-modes' },
@@ -13,15 +13,15 @@ const navItems = [
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const user = useAuth(); // Get the authenticated user
+  // const user = useAuth(); // Get the authenticated user
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Error during sign out:", error);
-    }
-  };
+  // const handleSignOut = async () => {
+  //   try {
+  //     await signOut();
+  //   } catch (error) {
+  //     console.error("Error during sign out:", error);
+  //   }
+  // };
 
   return (
     <nav className="bg-[#033330] fixed top-0 left-0 z-50 w-full">
@@ -51,13 +51,13 @@ export default function Navbar() {
               </Link>
             ))}
             {/* Sign-In or User Info */}
-            {user ? (
+            {/* {user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-white font-medium text-xl">
                   Welcome, {user.displayName}!
                 </span>
                 <button
-                  onClick={handleSignOut}
+                  // onClick={handleSignOut}
                   className="text-white hover:text-gray-300 font-medium text-xl transition-colors"
                 >
                   Logout
@@ -70,7 +70,7 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
-            )}
+            )} */}
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,7 +110,7 @@ export default function Navbar() {
                 </Link>
               ))}
               {/* Sign-In or User Info for Mobile */}
-              {user ? (
+              {/* {user ? (
                 <div className="flex flex-col space-y-2">
                   <span className="block px-3 py-2 text-white">
                     Welcome, {user.displayName}!
@@ -130,7 +130,7 @@ export default function Navbar() {
                 >
                   Sign In
                 </Link>
-              )}
+              )} */}
             </div>
           </div>
         )}

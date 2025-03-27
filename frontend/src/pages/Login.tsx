@@ -1,26 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithGoogle } from "../services/auth/GoogleAuthService";
+// import { signInWithGoogle } from "../services/auth/GoogleAuthService";
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const handleGoogleSignIn = async () => {
-        setLoading(true);
-        setError(null);
+    // const handleGoogleSignIn = async () => {
+    //     setLoading(true);
+    //     setError(null);
 
-        try {
-        await signInWithGoogle();
-        navigate("/");
-        } catch {
-        setError("Failed to sign in with Google. Please try again.");
-        console.error(error);
-        } finally {
-        setLoading(false);
-        }
-    };
+    //     try {
+    //         await signInWithGoogle();
+    //         navigate("/");
+    //     } catch {
+    //         setError("Failed to sign in with Google. Please try again.");
+    //         console.error(error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    
     return (
         <>
             <div className="flex min-h-screen flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#141516]">
@@ -30,10 +31,10 @@ export default function Login() {
                     </h2>
                 </div>
 
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">             
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                     <div className="w-4/5 mx-auto flex flex-col gap-4">
                         <button
-                            onClick={handleGoogleSignIn}
+                            // onClick={handleGoogleSignIn}
                             disabled={loading}
                             className="flex w-full items-center justify-center gap-3 rounded-md bg-transparent px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-[#0A746D] ring-inset hover:bg-gray-800 focus-visible:ring-transparent"
                         >
@@ -96,17 +97,17 @@ export default function Login() {
 
                     <div className="bg-tranparent px-6 py-6 shadow-sm sm:rounded-lg sm:px-12">
                         <form action="#" method="POST" className="space-y-6">
-                                <div className="mt-2">
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        required
-                                        autoComplete="email"
-                                        placeholder="Email"
-                                        className="border block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                                    />
-                                </div>
+                            <div className="mt-2">
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    autoComplete="email"
+                                    placeholder="Email"
+                                    className="border block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                                />
+                            </div>
 
                             <div>
                                 <div className="mt-2">
