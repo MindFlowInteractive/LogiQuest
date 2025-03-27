@@ -9,6 +9,17 @@ interface Contributor {
   profile: string;
 }
 
+import React, { useRef } from "react";
+
+// Dummy data for contributor profiles
+const profileData = [
+  { id: 1, name: "Abdulrazik Abdulsamad", title: "Full Stack Web Developer", imageSrc: "/svg/image1.svg" },
+  { id: 2, name: "Hamid Khalid", title: "Full Stack Web Developer", imageSrc: "/svg/image2.svg" },
+  { id: 3, name: "Jamilu Abbas", title: "Full Stack Web Developer", imageSrc: "/svg/image3.svg" },
+  { id: 4, name: "Abdulrazik Abdulsamad", title: "Full Stack Web Developer", imageSrc: "/svg/image4.svg" },
+  { id: 5, name: "Abdulrazik Abdulsamad", title: "Full Stack Web Developer", imageSrc: "/svg/image3.svg" },
+];
+
 interface ProfileCardProps {
   name: string;
   title: string;
@@ -50,6 +61,22 @@ const ContributorsSlider: React.FC = () => {
         }
       }
     }, 20);
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startAutoScroll = () => {
+    if (scrollIntervalRef.current !== null) return;
+    scrollIntervalRef.current = setInterval(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollLeft += 2; // Adjust speed as needed
+        // Loop back to the start when reaching the end
+        if (
+          containerRef.current.scrollLeft + containerRef.current.clientWidth >=
+          containerRef.current.scrollWidth
+        ) {
+          containerRef.current.scrollLeft = 0;
+        }
+      }
+    }, 20);
   };
 
   const stopAutoScroll = () => {
@@ -61,6 +88,12 @@ const ContributorsSlider: React.FC = () => {
 
   if (isLoading) return <p>Loading contributors...</p>;
   if (error) return <p>Failed to load contributors.</p>;
+  const stopAutoScroll = () => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
+  };
 
   return (
     <section className="w-full h-full">
@@ -81,6 +114,20 @@ const ContributorsSlider: React.FC = () => {
               title="Open Source Contributor"
               imageSrc={contributor.avatar}
             />
+          ))}
+        </div>
+      <div
+        className="w-full h-[615px] overflow-hidden relative"
+        ref={containerRef}
+        onMouseEnter={startAutoScroll}
+        onMouseLeave={stopAutoScroll}
+      >
+        <div
+          className="flex h-full gap-5"
+          style={{ scrollBehavior: "smooth", whiteSpace: "nowrap" }}
+        >
+          {profileData.map((profile) => (
+            <ProfileCard key={profile.id} {...profile} />
           ))}
         </div>
       </div>
