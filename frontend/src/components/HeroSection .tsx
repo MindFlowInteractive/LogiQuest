@@ -25,11 +25,10 @@ const HeroSection = () => {
             you're a trivia master or just looking to have <br />
             some fun.
           </p>
-          <Link   to="/get-started" className="mt-8 bg-yellow-500 text-black hover:bg-yellow-400 font-semibold px-9 py-3 rounded-md shadow-md transition">
+          <button  className="mt-8 bg-yellow-500 text-black hover:bg-yellow-400 font-semibold px-9 py-3 rounded-md shadow-md transition">
             Get Started
-          </Link>
+          </button>
         </div>
-
         <div className="relative flex justify-center md:justify-end mt-10 md:mt-[-20px] md:mr-[-15px] w-full md:w-auto">
           <img
             src={MergedPeople}

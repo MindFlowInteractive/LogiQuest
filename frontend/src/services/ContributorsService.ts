@@ -1,14 +1,31 @@
-import axios from 'axios';
-
 const API_URL = 'https://api.github.com/repos/MindFlowInteractive/LogiQuest/contributors';
 
-// Fetch contributors from GitHub API
 export const fetchContributors = async () => {
-  try {
-    const response = await axios.get(API_URL);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching contributors:', error);
-    throw error;
-  }
+    try {
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'Failed to fetch contributors');
+        }
+
+        // Extract only required fields: username, avatar, and profile link
+        return data.map((contributor: any) => ({
+            username: contributor.login,
+            avatar: contributor.avatar_url,
+            profile: contributor.html_url,
+        }));
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
+    }
 };
