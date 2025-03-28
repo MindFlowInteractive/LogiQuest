@@ -18,7 +18,7 @@ fn test_question_creation() {
         option_b: option_b,
         option_c: option_c,
         option_d: option_d,
-        correct_option_index: 0, 
+        correct_option_index: 0,
     };
 
     assert(validate_question(question) == true, 'Question should be valid');
