@@ -19,20 +19,20 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CategoryModule } from './category/category.module';
 import { StarknetModule } from './starknet/starknet.module';
+import { StatisticsModule } from './statistics/statistics.module';
+import { LeaderboardsModule } from './leaderboards/leaderboards.module';
 import { LifelineModule } from './lifeline/lifeline.module';
+
 
 @Module({
   imports: [
-    // Load environment variables from .env
     ConfigModule.forRoot({
       isGlobal: true,
-
       // Set the correct path for your environment file if needed
-      // envFilePath: '.env.development',
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      envFilePath: '.env.development',
+      // envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       // validate: validateConfig, // Load environment variables
     }),
-
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -47,11 +47,13 @@ import { LifelineModule } from './lifeline/lifeline.module';
     AuthModule,
     ProgressModule,
     StarknetModule,
-    DatabaseModule, // ✅ Correctly placed inside imports array
+    DatabaseModule,
     BlockchainModule,
     TransactionsModule,
-    LifelineModule,
     CategoryModule,
+    StatisticsModule,
+    LeaderboardsModule,
+    LifelineModule,
   ],
   controllers: [AppController],
   providers: [

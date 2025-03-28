@@ -1,0 +1,30 @@
+# @name login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+"username": "bliddUser",
+  "password": "12345jnjfjAS"
+}
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "bliddUser",
+   "email" : "ba@gmail.com",
+  "password": "12345jnjfjAS"
+}
+
+
+POST http://localhost:3000/game-sessions/quiz
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc0Mjk4OTY2MywiZXhwIjoxNzQyOTkwNTYzfQ.BBOxJwNTodNRiZqYuMKg9HvM5A4wEG0mk3j1KKItsZc
+
+{
+  "userId": 1,
+  "chainId": 1,
+  "categoryId": "science",
+  "difficultyLevel": 2,
+  "questionCount": 10
+}
+

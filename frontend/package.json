@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.69.0",
+    "lucide-react": "^0.483.0",
+    "firebase": "^11.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.1.5",
     "react-router-dom": "^6.29.0",
+    "zod": "^3.24.2"
     "react-scroll": "^1.9.3",
     "react-toastify": "^11.0.5"
   },

@@ -1,0 +1,12 @@
+### Global Leaderboard - Monthly
+GET http://localhost:3000/api/leaderboards/global?period=monthly&page=1&limit=10
+Accept: application/json
+
+### Category Leaderboard - Weekly (for category "science")
+GET http://localhost:3000/api/leaderboards/categories/science?period=weekly&page=1&limit=10
+Accept: application/json
+
+### User Ranking Lookup (Authenticated)
+GET http://localhost:3000/api/leaderboards/users/me/rank?period=monthly&category=science
+Accept: application/json
+Authorization: Bearer <your_jwt_token>

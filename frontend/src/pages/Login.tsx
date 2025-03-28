@@ -1,4 +1,27 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import { signInWithGoogle } from "../services/auth/GoogleAuthService";
+
 export default function Login() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+
+    // const handleGoogleSignIn = async () => {
+    //     setLoading(true);
+    //     setError(null);
+
+    //     try {
+    //         await signInWithGoogle();
+    //         navigate("/");
+    //     } catch {
+    //         setError("Failed to sign in with Google. Please try again.");
+    //         console.error(error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    
     return (
         <>
             <div className="flex min-h-screen flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#141516]">
@@ -10,11 +33,12 @@ export default function Login() {
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                     <div className="w-4/5 mx-auto flex flex-col gap-4">
-                        <a
-                            href="#"
+                        <button
+                            // onClick={handleGoogleSignIn}
+                            disabled={loading}
                             className="flex w-full items-center justify-center gap-3 rounded-md bg-transparent px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-[#0A746D] ring-inset hover:bg-gray-800 focus-visible:ring-transparent"
                         >
-                            <span className="text-sm/6 font-semibold text-[#0A746D]">Google</span>
+                            <span className="text-sm/6 font-semibold text-[#0A746D]">{loading ? "Signing in..." : "Google"}</span>
                             <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
                                 <path
                                     d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z"
@@ -33,7 +57,7 @@ export default function Login() {
                                     fill="#34A853"
                                 />
                             </svg>
-                        </a>
+                        </button>
 
                         <a
                             href="#"
@@ -73,17 +97,17 @@ export default function Login() {
 
                     <div className="bg-tranparent px-6 py-6 shadow-sm sm:rounded-lg sm:px-12">
                         <form action="#" method="POST" className="space-y-6">
-                                <div className="mt-2">
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        required
-                                        autoComplete="email"
-                                        placeholder="Email"
-                                        className="border block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                                    />
-                                </div>
+                            <div className="mt-2">
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    autoComplete="email"
+                                    placeholder="Email"
+                                    className="border block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                                />
+                            </div>
 
                             <div>
                                 <div className="mt-2">

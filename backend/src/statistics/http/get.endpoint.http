@@ -1,0 +1,27 @@
+@host = http://localhost:3000/api/users/me
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NDliMDkzOS0zNzM0LTQwYzEtODFhNi05ZWYzOTIwMTg0ODgiLCJ1c2VybmFtZSI6ImxqdHdwIiwiaWF0IjoxNzQyOTY1MjExLCJleHAiOjE3NDI5NjYxMTF9.h0mi9TXhWZkox9NyDFPohm5p2-kTBxBfPHTED-AXfIw
+
+### Get user profile with basic statistics
+GET {{host}}/profile
+Authorization: Bearer {{authToken}}
+
+### Get detailed performance statistics
+GET {{host}}/statistics
+Authorization: Bearer {{authToken}}
+
+### Get category-specific performance (science)
+GET {{host}}/statistics/categories/science
+Authorization: Bearer {{authToken}}
+
+### Historical Performance Data (Monthly)
+GET {{host}}/statistics/history?period=month
+Authorization: Bearer {{authToken}}
+
+### Historical Performance Data (Weekly - default)
+GET {{host}}/statistics/history
+Authorization: Bearer {{authToken}}
+
+### Historical Performance Data (Daily)
+GET {{host}}/statistics/history?period=day
+Authorization: Bearer {{authToken}}
+

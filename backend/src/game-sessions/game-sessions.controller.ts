@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Request,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { GameSessionsService } from './game-sessions.service';
 import { CreateGameSessionDto } from './dto/create-game-session.dto';
@@ -18,6 +20,9 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { CreateQuizSessionDto } from './dto/create-quiz-session.dto';
+import { SubmitAnswerDto } from './dto/submit-answer.dto';
+import { UseLifelineDto } from './dto/use-lifeline.dto';
 
 @ApiTags('game-sessions')
 @Controller('game-sessions')
@@ -34,6 +39,21 @@ export class GameSessionsController {
   create(@Body() createGameSessionDto: CreateGameSessionDto, @Request() req) {
     createGameSessionDto.userId = req.user.id;
     return this.gameSessionsService.create(createGameSessionDto);
+  }
+
+  @Post('quiz')
+  @ApiOperation({ summary: 'Create a new quiz session' })
+  @ApiResponse({
+    status: 201,
+    description: 'Quiz session successfully created',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  createQuizSession(
+    @Body() createQuizSessionDto: CreateQuizSessionDto,
+    @Request() req,
+  ) {
+    createQuizSessionDto.userId = req.user.id;
+    return this.gameSessionsService.createQuizSession(createQuizSessionDto);
   }
 
   @Get()
@@ -61,6 +81,27 @@ export class GameSessionsController {
   })
   getSessionHistory(@Request() req) {
     return this.gameSessionsService.getSessionHistory(req.user.id);
+  }
+
+  @Get('stats')
+  @ApiOperation({ summary: 'Get quiz statistics for the user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns quiz statistics for the user',
+    schema: {
+      type: 'object',
+      properties: {
+        totalQuizzes: { type: 'number' },
+        averageScore: { type: 'number' },
+        highestScore: { type: 'number' },
+        totalCorrectAnswers: { type: 'number' },
+        totalIncorrectAnswers: { type: 'number' },
+        averageResponseTime: { type: 'number' },
+      },
+    },
+  })
+  getQuizStats(@Request() req) {
+    return this.gameSessionsService.getQuizSessionStats(req.user.id);
   }
 
   @Get(':id')
@@ -128,21 +169,11 @@ export class GameSessionsController {
     return this.gameSessionsService.remove(+id);
   }
 
-
   @Post(':id/answer')
   @ApiOperation({ summary: 'Submit an answer for a game session step' })
-  @ApiBody({ 
-    schema: {
-      type: 'object',
-      properties: {
-        stepId: { type: 'number', example: 3 },
-        answer: { type: 'string', example: 'Jupiter' },
-        responseTime: { type: 'number', example: 2.5 }
-      }
-    }
-  })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiBody({ type: SubmitAnswerDto })
+  @ApiResponse({
+    status: 200,
     description: 'Returns the result of the answer submission',
     schema: {
       type: 'object',
@@ -150,31 +181,56 @@ export class GameSessionsController {
         isCorrect: { type: 'boolean' },
         pointsAwarded: { type: 'number' },
         currentScore: { type: 'number' },
-        feedback: { type: 'string' }
-      }
-    }
+        feedback: { type: 'string' },
+        nextStep: { type: 'number' },
+        isCompleted: { type: 'boolean' },
+      },
+    },
   })
   async submitAnswer(
     @Param('id') id: string,
-    @Body() answerData: { stepId: number; answer: string; responseTime: number },
+    @Body() answerData: SubmitAnswerDto,
   ) {
     return this.gameSessionsService.submitAnswer(
       id,
       answerData.stepId,
       answerData.answer,
       answerData.responseTime,
+      answerData.lifelinesUsed,
     );
+  }
+
+  @Post(':id/lifeline')
+  @ApiOperation({ summary: 'Use a lifeline in a quiz session' })
+  @ApiBody({ type: UseLifelineDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the result of using the lifeline',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        data: { type: 'object' },
+        message: { type: 'string' },
+      },
+    },
+  })
+  @HttpCode(HttpStatus.OK)
+  async useLifeline(
+    @Param('id') id: string,
+    @Body() lifelineDto: UseLifelineDto,
+  ) {
+    return this.gameSessionsService.useLifeline(+id, lifelineDto);
   }
 
   @Get('game-session/:id')
   @ApiOperation({ summary: 'Get a game session by ID' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Returns the game session',
     // Reference to GameSession entity
   })
   @ApiResponse({ status: 404, description: 'Game session not found' })
-
   async getGameSession(@Param('id') id: number) {
     return this.gameSessionsService.findGameSessionOne(id);
   }

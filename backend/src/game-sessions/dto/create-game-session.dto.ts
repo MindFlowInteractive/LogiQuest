@@ -3,7 +3,7 @@ import { IsNumber, IsNotEmpty } from "class-validator"
 export class CreateGameSessionDto {
   @IsNumber()
   @IsNotEmpty()
-  userId: number
+  userId?: number
 
   @IsNumber()
   @IsNotEmpty()

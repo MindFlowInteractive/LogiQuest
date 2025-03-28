@@ -1,11 +1,27 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsEmail, MinLength, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  MinLength,
+  MaxLength,
+  IsOptional,
+  isNumber,
+  IsNumber,
+  IsObject,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger'; // Importing the @ApiProperty decorator
 import { Exclude } from 'class-transformer';
+import { CreateDateColumn } from 'typeorm';
 
 export class RegisterDto {
+  @IsUUID()
+  @IsOptional()
+  id?: string; 
+
   @ApiProperty({
-    description: 'The username of the user, must be between 3 and 20 characters.',
+    description:
+      'The username of the user, must be between 3 and 20 characters.',
     minLength: 3,
     maxLength: 20,
   })
@@ -21,12 +37,34 @@ export class RegisterDto {
   email: string;
 
   @ApiProperty({
-    description: 'The password of the user, must be at least 8 characters long.',
-    minLength: 8,
+    description: 'The total score of the user.',
   })
+  @IsOptional()
+  @IsNumber()
+  totalScore?: number;
+
+  @ApiProperty({
+    description: 'The wallet address of the user.',
+  })
+  @IsOptional()
   @IsString()
-  @MinLength(8)
-  password: string;
+  walletAddress?: string;
+
+  @CreateDateColumn()
+  @ApiProperty({
+    description: 'The timestamp when the user is created',
+    example: '2024-02-18T12:34:56.789Z',
+  })
+  createdAt?: Date;
+
+
+  @IsOptional()
+  @IsObject()
+  profileCustomization?: {
+    theme?: 'light' | 'dark' | 'system';
+    avatarUrl?: string;
+    bio?: string;
+  };
 }
 
 export class LoginDto {

@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -10,6 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenDto } from './dto/refresh-token-dto.dto';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcryptjs';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,53 +23,97 @@ export class AuthService {
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService, // Ensure this service is properly injected
     private readonly configService: ConfigService,
-
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<RegisterDto> {
+  async register(registerDto: CreateUserDto): Promise<RegisterDto> {
+    // Check if user already exists
+    const existingUser = await this.usersService.findByEmail(registerDto.email);
+    if (existingUser) {
+      throw new ConflictException('Email already in use');
+    }
+    // Hash password
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+
+    // Create user
+    const user = await this.usersService.createUser({
+      ...registerDto,
+      password: hashedPassword,
+    });
+
+    // Return user data (without password)
     return {
-      username: registerDto.username,
-      email: registerDto.email,
-      password: registerDto.password,
+      username: user.username,
+      email: user.email,
+      walletAddress: user.walletAddress,
+      createdAt: user.createdAt,
+      totalScore: user.totalScore,
+      profileCustomization: user.profileCustomization,
     };
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = { id: 1, username: loginDto.username }; // Replace with actual user lookup
+    // Find user by username
+    const user = await this.usersService.findByUsername(loginDto.username);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Generate tokens
     const accessToken = this.jwtService.sign(
-      { sub: user.id },
-      { secret: 'ACCESS_SECRET', expiresIn: '15m' },
+      { sub: user.id, username: user.username },
+      { secret: process.env.JWT_SECRET, expiresIn: '15m' },
     );
 
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
-      { secret: 'REFRESH_SECRET', expiresIn: '7d' },
+      { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' },
     );
 
-    this.refreshTokens[user.id] = refreshToken; // Store in DB in production
+    // Store refresh token (in production, store in database)
+    this.refreshTokens[user.id] = refreshToken;
 
+    // Return response
     return {
       accessToken,
-      user,
-      refreshToken, // Return refresh token to user
+      refreshToken,
+      user: {
+        id: user.id,
+        username: user.username,
+      },
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    const { refreshToken } = refreshTokenDto;
-
+  async refreshToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<{ accessToken: string }> {
     try {
-      const decoded = jwt.verify(refreshToken, this.configService.get('JWT_REFRESH_SECRET')) as {
-        sub: string;
-      };
-      const userId = decoded.sub;
+      const { refreshToken } = refreshTokenDto;
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
 
-      if (this.refreshTokens[userId] !== refreshToken) {
+      // Verify refresh token is still valid
+      if (this.refreshTokens[payload.sub] !== refreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
-      return this.login({ username: `user`, password: `password` }); // Replace with actual user lookup
+      // Generate new access token
+      const user = await this.usersService.findById(payload.sub);
+      const accessToken = this.jwtService.sign(
+        { sub: user.id, email: user.email },
+        { secret: process.env.JWT_SECRET, expiresIn: '15m' },
+      );
+
+      return { accessToken };
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
