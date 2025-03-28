@@ -1,7 +1,4 @@
-import Contributors from "./Contributors";
-// import ProfileSlider from "./ProfileSlider";
-
-
+import ProfileSlider from "./ProfileSlider";
 
 const AboutUsSection = () => {
   return (
@@ -70,12 +67,12 @@ const AboutUsSection = () => {
           </p>
         </main>
       </main>
-      <main className=" w-full h-[989px]  relative space-y-32 -mt-64 pt-12 px-4">
-        {/* <h1 className="text-3xl md:text-[45px] lg:text-3xl font-bold text-center">
+      <main className=" w-full h-[989px]  relative space-y-64 -mt-64 pt-12 px-4">
+        <h1 className="text-3xl md:text-[45px] lg:text-3xl font-bold text-center">
           Contributors
-        </h1>       */}
-        <Contributors />
-        {/* <ProfileSlider/> */}
+        </h1>
+      
+        <ProfileSlider/>
       </main>
     </section>
   );

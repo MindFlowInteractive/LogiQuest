@@ -1,6 +1,6 @@
 import MergedPeople from "../assets/merged.png";
 import BackgroundImage from "../assets/background.png";
-import { Link } from "react-router-dom";
+
 
 
 const HeroSection = () => {
