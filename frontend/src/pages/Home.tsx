@@ -9,6 +9,29 @@ import AccountSettings from "../components/AccountSettings";
 import ProfileForm from "../components/ProfileForm";
 
 const Home = () => {
+ feat/RecentGameActivity
+  return (
+    <>
+      {/* paste your page component below here */}
+ feat/RecentGameActivity
+
+      <Navbar />
+      <HeroSection />
+      <WhyShouldYouPlaySection />
+      <FaqsSection />
+      <AboutUsSection />
+
+      <Navbar />
+      <HeroSection />
+      <WhyShouldYouPlaySection />
+      <AboutUsSection />
+      <FaqsSection />
+ main
+      <Footer />
+      {/* paste your page component above here */}
+    </>
+  );
+
 	return (
 		<>
 			{/* paste your page component below here */}
@@ -25,6 +48,7 @@ const Home = () => {
 		</>
 	);
   
+ main
 };
 
 export default Home;

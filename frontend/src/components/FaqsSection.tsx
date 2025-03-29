@@ -75,6 +75,24 @@ const FaqsSection = () => {
               className="cursor-pointer flex justify-between items-center py-4 md:py-6  w-full"
               onClick={() => toggleAccordion(index)}
             >
+ feat/RecentGameActivity
+              <h3 className="text-[33px] font-semibold">{faq.question}</h3>
+              <span>
+                <svg
+                  className={`w-8 h-8 transition-transform duration-300 ${
+                    index == expandedIndex ? "rotate-180" : "rotate-0"
+                  }`}
+                  viewBox="0 0 180 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="white"
+                  stroke="white"
+                  strokeWidth="6"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="10,10 170,10 90,90" />
+                </svg>
+              </span>
+
               <h3 className="text-2xl md:text-[33px] lg:text-2xl font-semibold ">
                 {faq.question}
               </h3>
@@ -91,6 +109,7 @@ const FaqsSection = () => {
               >
                 <polygon points="10,10 170,10 90,90" />
               </svg>
+ main
             </div>
 
             <div

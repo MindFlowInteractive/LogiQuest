@@ -7,9 +7,9 @@ export default {
         prompt: ["font-prompt", "sans-serif"],
       },
       colors: {
-        'brand-primary-green': '#033330',
-        'brand-primary-yellow': '#F9BC07',
-        'brand-primary-white': '#fff',
+        "brand-primary-green": "#033330",
+        "brand-primary-yellow": "#F9BC07",
+        "brand-primary-white": "#fff",
       },
     },
   },

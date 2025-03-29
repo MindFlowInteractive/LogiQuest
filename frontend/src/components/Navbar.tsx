@@ -1,13 +1,23 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+ feat/RecentGameActivity
+
 // import useAuth from "../hooks/useAuth";
 // import { signOut } from "../services/auth/GoogleAuthService";
+ main
 
 const navItems = [
+ feat/RecentGameActivity
+  { label: "How To Play", href: "/how-to-play" },
+  { label: "Game Modes", href: "/game-modes" },
+  { label: "FAQs", href: "/faqs" },
+  { label: "About Us", href: "/about" },
+
   { label: 'Game Modes', href: '/game-modes' },
   { label: 'How To Play', href: '/how-to-play' },
   { label: 'About Us', href: '/about' },
   { label: 'FAQs', href: '/faqs' },
+ main
 ] as const;
 
 export default function Navbar() {
@@ -34,7 +44,9 @@ export default function Navbar() {
               alt="LogiQuest"
               className="w-10 h-10 md:w-16 md:h-[4.4rem] mr-2"
             />
-            <span className="text-[#CFFDED] text-[2rem] font-bold">LogiQuest</span>
+            <span className="text-[#CFFDED] text-[2rem] font-bold">
+              LogiQuest
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -137,4 +149,8 @@ export default function Navbar() {
       </div>
     </nav>
   );
+ feat/RecentGameActivity
 }
+
+}
+ main

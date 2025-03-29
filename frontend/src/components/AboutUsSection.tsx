@@ -71,8 +71,8 @@ const AboutUsSection = () => {
         <h1 className="text-3xl md:text-[45px] lg:text-3xl font-bold text-center">
           Contributors
         </h1>
-      
-        <ProfileSlider/>
+
+        <ProfileSlider />
       </main>
     </section>
   );
