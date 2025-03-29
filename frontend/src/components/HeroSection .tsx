@@ -1,5 +1,6 @@
 import MergedPeople from "../assets/merged.png";
 import BackgroundImage from "../assets/background.png";
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
 	return (
@@ -29,6 +30,23 @@ const HeroSection = () => {
 					</button>
 				</div>
 
+        <div className="relative flex justify-center md:justify-end mt-10 md:mt-[-20px] md:mr-[-15px] w-full md:w-auto">
+          <img
+            src={MergedPeople}
+            alt="Game Characters"
+            className="w-[600px] max-w-full"
+          />
+
+ <Link to="/get-started">
+  <button className="hidden sm:block absolute left-[10%] bottom-[10%] md:left-10 md:bottom-20 bg-yellow-500 text-black hover:bg-yellow-400 font-semibold px-20 py-5 rounded-md shadow-md transition">
+    Get Started
+  </button>
+</Link>
+
+        </div>
+      </div>
+    </section>
+  );
 				<div className="relative flex justify-center md:justify-end mt-10 md:mt-[-20px] md:mr-[-15px] w-full md:w-auto">
 					<img
 						src={MergedPeople}
