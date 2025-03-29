@@ -7,6 +7,13 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+
+@Entity()
+export class User {
+  @ApiProperty({ example: 1, description: 'Unique identifier for the user' })
+  @PrimaryGeneratedColumn()
+  id: number;
 import { Score } from '../../leaderboards/entities/score.entity';
 
 @Entity()
@@ -14,18 +21,23 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id?: number;
 
+  @ApiProperty({ example: 'johndoe', description: 'Unique username of the user' })
   @Column({ unique: true })
   username: string;
 
+  @ApiProperty({ example: 'johndoe@example.com', description: 'Unique email of the user' })
   @Column({ unique: true })
   email: string;
 
+  @ApiProperty({ example: 'hashedpassword123', description: 'User password (hashed)' })
   @Column()
   password: string;
 
+  @ApiProperty({ example: '0x1234abcd...', description: 'User wallet address', nullable: true })
   @Column({ nullable: true })
   walletAddress: string;
 
+  @ApiProperty({ example: '2025-03-27T12:00:00.000Z', description: 'Timestamp when the user was created' })
   @Column({ default: 0 })
   totalScore: number;
 
@@ -67,12 +79,18 @@ export class User {
   @CreateDateColumn()
   createdAt?: Date;
 
+  @ApiProperty({ example: '2025-03-27T12:30:00.000Z', description: 'Timestamp when the user was last updated' })
   @UpdateDateColumn()
   updatedAt?: Date;
 
   @OneToMany(() => Score, (score) => score.user)
   scores: Score[];
 
+  @ApiProperty({
+    type: () => [GameSession],
+    description: 'List of game sessions associated with the user',
+    required: false,
+  })
   @OneToMany(() => GameSession, (gameSession) => gameSession.user)
   gameSessions?: GameSession[];
 }

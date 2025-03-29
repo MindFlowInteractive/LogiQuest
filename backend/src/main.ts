@@ -7,16 +7,16 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Existing configurations
+  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
-  app.useGlobalFilters(new AllExceptionsFilter());
-
+  // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
   // Swagger configuration
@@ -24,15 +24,18 @@ async function bootstrap() {
     .setTitle('LogiQuest API')
     .setDescription('API for managing LogiQuest, steps, and progress')
     .setVersion('1.0')
-    .addTag(
-      'LogiQuest',
-      'API endpoints for managing LogiQuest, steps, and progress',
-    )
+    .addBearerAuth() // Adds authentication support
+    .addTag('Users', 'Endpoints for user management')
+    .addTag('Auth', 'Endpoints for authentication')
+    .addTag('Puzzles', 'Endpoints for puzzles management')
+    .addTag('Steps', 'Endpoints for steps management')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
 
-  // Start the server
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: { persistAuthorization: true },
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
