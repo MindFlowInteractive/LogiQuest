@@ -20,6 +20,7 @@ mod LogiQuest {
         initialize: bool,
         // New storage for user activity
         user_activity: Map<(ContractAddress, u8), UserActivity>, // (player, mode_id) -> activity
+        claimed_base_reward: Map<(ContractAddress, u8), bool>,
         daily_challenge_activity: Map<
             (ContractAddress, u32), UserActivity
         >, // (player, day) -> daily challenge activity
@@ -297,6 +298,9 @@ mod LogiQuest {
             // Get the game mode to check its properties
             let game_mode = self.game_modes.read(mode_id);
 
+            // check/claim base rewards if not claimed already
+            self._claim_base_reward(player, mode_id, game_mode.base_reward);
+
             // Initialize or update activity
             if mode_id == DAILY_CHALLENGE_MODE {
                 // Special handling for Daily Challenge mode - track by day
@@ -310,6 +314,11 @@ mod LogiQuest {
                 activity.total_score += session_details.score;
                 activity.total_time_spent += session_details.duration;
                 activity.last_session = session_details;
+
+                //update player total score for the session
+                let current_rewards = self.player_total_rewards.read(player);
+                let session_score = session_details.score.into();
+                self.player_total_rewards.write(player, session_score + current_rewards);
 
                 // Update daily specific counters
                 activity.daily_activity.completed_sessions += 1;
@@ -354,6 +363,11 @@ mod LogiQuest {
                 activity.total_score += session_details.score;
                 activity.total_time_spent += session_details.duration;
                 activity.last_session = session_details;
+
+                //update player total score for the session
+                let current_rewards = self.player_total_rewards.read(player);
+                let session_score = session_details.score.into();
+                self.player_total_rewards.write(player, session_score + current_rewards);
 
                 // For non-daily modes, update the day in daily_activity for reference
                 activity.daily_activity.day = day;
@@ -517,6 +531,18 @@ mod LogiQuest {
             }
 
             existing
+        }
+
+        fn _claim_base_reward(
+            ref self: ContractState, player: ContractAddress, mode_id: u8, base_reward: u256
+        ) {
+            let claimed: bool = self.claimed_base_reward.read((player, mode_id));
+            if !claimed {
+                let current_rewards = self.player_total_rewards.read(player);
+                self.player_total_rewards.write(player, current_rewards + base_reward);
+
+                self.claimed_base_reward.write((player, mode_id), true);
+            }
         }
 
         // Helper to get current day
