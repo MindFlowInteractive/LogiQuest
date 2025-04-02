@@ -11,6 +11,8 @@ frontend/.DS_Store
 frontend/build/
 frontend/coverage/
 frontend/public/static/
+node_modules/
+
 
 # Ignore all files in the backend (NestJS app)
 backend/dist/
