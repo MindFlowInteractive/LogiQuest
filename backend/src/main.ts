@@ -25,17 +25,29 @@ async function bootstrap() {
   );
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
+app.enableCors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+});
+
 
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('LogiQuest API')
     .setDescription('API for managing LogiQuest, steps, and progress')
     .setVersion('1.0')
-    .addBearerAuth() // Adds authentication support
-    .addTag('Users', 'Endpoints for user management')
-    .addTag('Auth', 'Endpoints for authentication')
-    .addTag('Puzzles', 'Endpoints for puzzles management')
-    .addTag('Steps', 'Endpoints for steps management')
+    .addTag('Users', 'User management and profile operations')
+    .addTag('Auth', 'Authentication and authorization')
+    .addTag('Puzzles', 'Quiz and puzzle management')
+    .addTag('Steps', 'Individual quiz step management')
+    .addTag('GameSessions', 'Quiz session tracking and management')
+    .addTag('Achievements', 'User achievement tracking')
+    .addTag('Transactions', 'Blockchain transaction management')
+    .addTag('Categories', 'Quiz category management')
+    .addTag('Progress', 'User progress tracking')
+    .addTag('Leaderboards', 'Competitive ranking systems')
+    .addTag('Lifelines', 'Quiz assistance mechanisms')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
