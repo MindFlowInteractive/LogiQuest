@@ -27,8 +27,8 @@ export enum TransactionStatus {
 @Entity('transactions')
 export class Transaction {
   @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ApiProperty({ example: 'reward', enum: TransactionType })
   @Column({ type: 'enum', enum: TransactionType })

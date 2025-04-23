@@ -31,7 +31,7 @@ import { ProgressTrackingService } from '../progress/progess-tracking.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Users')
-@Controller('api/users')
+@Controller('users')
 export class UserController {
   constructor(
     private readonly usersService: UsersService,

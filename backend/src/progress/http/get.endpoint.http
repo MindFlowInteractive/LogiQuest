@@ -1,6 +1,6 @@
 
 #Get all progress
-GET http://localhost:3000/progress
+GET http://localhost:3000/progress/user/1
 
 
 

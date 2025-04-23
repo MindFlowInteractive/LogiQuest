@@ -1,6 +1,6 @@
 #Create a user 
 
-POST http://localhost:3002/users 
+POST http://localhost:3000/users 
 Content-Type: application:json
 
   {

@@ -1,6 +1,7 @@
 import {
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -82,9 +83,9 @@ export class CreateTransactionDto {
 
   @ApiProperty({
     description: 'User ID linked to the transaction',
-    example: '550e8400-e29b-41d4-a716-446655440000',
+    example: 1,
   })
-  @IsUUID()
+  @IsNumber()
   @IsNotEmpty()
-  userId: string;
+  userId: number;
 }

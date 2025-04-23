@@ -1,0 +1,14 @@
+POST http://localhost:3000/transactions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MjM2ODEsImV4cCI6MTc0NTQyNDU4MX0.WzEonfgsPxOo1Uxr3TA039-Y9ydzLcfYYPYg1nm-QRg
+
+{
+  "type": "reward",
+  "amount": "100",
+  "userId": 1,
+  "metadata": {
+    "source": "achievement",
+    "achievementId": "5",
+    "description": "Completed first quiz"
+  }
+}

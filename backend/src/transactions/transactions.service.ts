@@ -13,13 +13,14 @@ export class TransactionsService {
     private transactionsRepository: Repository<Transaction>,
   ) {}
 
-  async create(
-    createTransactionDto: CreateTransactionDto,
-  ): Promise<Transaction> {
-    const transaction =
-      this.transactionsRepository.create(createTransactionDto);
-    return this.transactionsRepository.save(transaction);
-  }
+async create(createTransactionDto: CreateTransactionDto): Promise<Transaction> {
+  // Convert DTO to entity format
+  const transaction = new Transaction();
+  Object.assign(transaction, createTransactionDto);
+  
+  // Save and return
+  return await this.transactionsRepository.save(transaction);
+}
 
   async findAll(query: QueryTransactionDto = {}): Promise<Transaction[]> {
     const queryBuilder =
@@ -56,15 +57,20 @@ export class TransactionsService {
     return queryBuilder.getMany();
   }
 
-  async findOne(id: string): Promise<Transaction> {
-    const transaction = await this.transactionsRepository.findOne({
-      where: { id },
-    });
-    if (!transaction) {
-      throw new NotFoundException(`Transaction with ID ${id} not found`);
-    }
-    return transaction;
+async findOne(id: string | number): Promise<Transaction> {
+  // If id is a string but needs to be a number for the database
+  const idValue = typeof id === 'string' ? parseInt(id, 10) : id;
+  
+  const transaction = await this.transactionsRepository.findOne({
+    where: { id: idValue },
+  });
+  
+  if (!transaction) {
+    throw new NotFoundException(`Transaction with ID ${id} not found`);
   }
+  
+  return transaction;
+}
 
   async findByTxHash(txHash: string): Promise<Transaction> {
     const transaction = await this.transactionsRepository.findOne({

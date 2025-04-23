@@ -1,0 +1,8 @@
+#Get all transactions 
+GET http://localhost:3000/transactions
+
+
+#Get a single transactions by it's ID
+
+GET http://localhost:3000/transactions?type=reward&userId=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MjM2ODEsImV4cCI6MTc0NTQyNDU4MX0.WzEonfgsPxOo1Uxr3TA039-Y9ydzLcfYYPYg1nm-QRg

@@ -1,5 +1,5 @@
 #Get all achievements
-GET http://localhost:3000/achievements
+GET http://localhost:3000/users/me/achievements
 
 
 
