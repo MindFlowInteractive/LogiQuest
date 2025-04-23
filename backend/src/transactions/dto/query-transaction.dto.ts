@@ -1,6 +1,7 @@
-import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TransactionType, TransactionStatus } from '../entities/transactions.entity';
+import { Type } from 'class-transformer';
 
 export class QueryTransactionDto {
   @ApiProperty({
@@ -28,9 +29,10 @@ export class QueryTransactionDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
     required: false,
   })
-  @IsUUID()
-  @IsOptional()
-  userId?: string;
+  @IsNumber()
+  @Type(() => Number)
+  @IsNotEmpty()
+  userId?: number;
 
   @ApiProperty({
     description: 'Filter by transaction hash',

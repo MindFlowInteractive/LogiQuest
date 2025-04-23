@@ -1,7 +1,0 @@
-#Get all transactions 
-GET http://localhost:3000/transactions
-
-
-#Get a single transactions by it's ID
-
-GET http://localhost:3000/transactions/1

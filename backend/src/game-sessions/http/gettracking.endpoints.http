@@ -1,4 +1,4 @@
-POST http://localhost:3002/game-sessions/1/answer
+POST http://localhost:3000/game-sessions/1/answer
 Content-Type: application/json
 
 {
@@ -8,10 +8,10 @@ Content-Type: application/json
 }
 
 
-GET http://localhost:3002/game-sessions/game-session/1
+GET http://localhost:3000/game-sessions/game-session/1
 
 
-GET http://localhost:3002/api/users/1/progress/
+GET http://localhost:3000/users/1/progress/
 
 
-GET http://localhost:3002/api/users/me/categories/progress
+GET http://localhost:3000/users/me/categories/progress

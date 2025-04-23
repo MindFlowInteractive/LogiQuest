@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller, Get, Param, Patch, Body, Post } from '@nestjs/common';
 import { ProgressService } from './progress.service';
-import { UpdateProgressDto } from './dto/progress.dto';
+import { CreateProgressDto, ProgressResponseDto, UpdateProgressDto } from './dto/progress.dto';
 import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+
 @ApiTags('progress')
 @Controller('progress')
 export class ProgressController {
   constructor(private readonly progressService: ProgressService,
-    
   ) {}
 
   @Get(':id')
@@ -30,6 +30,13 @@ export class ProgressController {
   ) {
     return this.progressService.updateChainProgress(userId, chainId, status);
   }
+
+  @Post()
+@ApiOperation({ summary: 'Create a new progress entry' })
+@ApiResponse({ status: 201, description: 'Progress entry successfully created' })
+createProgress(@Body() createProgressDto: CreateProgressDto) {
+  return this.progressService.create(createProgressDto);
+}
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update progress by ID' })

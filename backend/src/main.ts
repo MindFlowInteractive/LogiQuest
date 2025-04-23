@@ -15,9 +15,7 @@ async function bootstrap() {
   app.use(helmet());
 
   // Security middleware
-  app.use(SecurityMiddleware);
-
-  // Existing configurations
+  
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

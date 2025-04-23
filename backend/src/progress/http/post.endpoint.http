@@ -1,8 +1,12 @@
-
-#Post a new Progress
 POST http://localhost:3000/progress
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MTk1MDYsImV4cCI6MTc0NTQyMDQwNn0.AQc7CznLt16CphgjhZtQBYepp6iEOcpb307GUZgUSc8
+
 {
-
-
+  "userId": 1,
+  "chainId": 1,
+  "status": "in_progress",
+  "completedSteps": [],
+  "currentStep": 0,
+  "startedAt": "2025-04-23T15:30:00.000Z"
 }

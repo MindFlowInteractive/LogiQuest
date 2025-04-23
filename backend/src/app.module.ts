@@ -29,6 +29,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { ApiUsageMiddleware } from './middleware/api-usage.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { SecurityMiddleware } from './security/security.middleware';
 
 @Module({
   imports: [
@@ -95,6 +96,8 @@ export class AppModule implements NestModule {
       )
       .forRoutes('*')
       .apply(ApiUsageMiddleware)
+      .forRoutes('*')
+      .apply(SecurityMiddleware) 
       .forRoutes('*');
   }
 }

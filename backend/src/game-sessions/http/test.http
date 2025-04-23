@@ -6,6 +6,15 @@ Content-Type: application/json
 "username": "bliddUser",
   "password": "12345jnjfjAS"
 }
+
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  
+  "username": "testUser",
+  "password": "Password123"
+}
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
@@ -18,7 +27,7 @@ Content-Type: application/json
 
 POST http://localhost:3000/game-sessions/quiz
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTc0Mjk4OTY2MywiZXhwIjoxNzQyOTkwNTYzfQ.BBOxJwNTodNRiZqYuMKg9HvM5A4wEG0mk3j1KKItsZc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MTgzNTEsImV4cCI6MTc0NTQxOTI1MX0.WWWetJO4jaSl1bYYN7Z1YE2V49oqsdrv9get17z-j0A
 
 {
   "userId": 1,

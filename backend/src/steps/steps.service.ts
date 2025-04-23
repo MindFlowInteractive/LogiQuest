@@ -12,19 +12,19 @@ export class StepsService {
     private stepRepo: Repository<Step>,
   ){}
   
- async create(dto: CreateStepDto) {
+async create(dto: CreateStepDto) {
   const step = await this.stepRepo.create({
     description: dto.description,
     order: dto.order,
     hints: dto.hints,
     correctAnswer: dto.correctAnswer,
     options: dto.options
-  })
-    return step  ;
-  }
+  });
+  return await this.stepRepo.save(step); 
+}
 
-  findAll() {
-    return `This action returns all steps`;
+  async findAll() {
+    return await this.stepRepo.find();
   }
 
   async findOne(id: number) {
@@ -54,11 +54,22 @@ export class StepsService {
   }
 
 
-  update(id: number, updateStepDto: UpdateStepDto) {
-    return `This action updates a #${id} step`;
+async update(id: number, updateStepDto: UpdateStepDto) {
+  const step = await this.stepRepo.findOne({ where: { id } });
+  if (!step) {
+    throw new NotFoundException(`Step with ID ${id} not found`);
   }
+  
+  Object.assign(step, updateStepDto);
+  return await this.stepRepo.save(step);
+}
 
-  remove(id: number) {
-    return `This action removes a #${id} step`;
+async remove(id: number) {
+  const step = await this.stepRepo.findOne({ where: { id } });
+  if (!step) {
+    throw new NotFoundException(`Step with ID ${id} not found`);
   }
+  
+  return await this.stepRepo.remove(step);
+}
 }
