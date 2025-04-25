@@ -5,17 +5,18 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { SecurityMiddleware } from './security/security.middleware';
+import { TransformResponseInterceptor } from './common/interceptors/transform-response.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
 
   // Global validation pipe
   // Security headers
   app.use(helmet());
 
   // Security middleware
-  
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -23,14 +24,20 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  //global interceptors
+  app.useGlobalInterceptors(
+    new TransformResponseInterceptor(),
+    new LoggingInterceptor()
+  );
+
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
-app.enableCors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  credentials: true,
-});
-
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  });
 
   // Swagger configuration
   const config = new DocumentBuilder()

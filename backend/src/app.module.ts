@@ -30,9 +30,14 @@ import { AuthMiddleware } from './middleware/auth.middleware';
 import { ApiUsageMiddleware } from './middleware/api-usage.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityMiddleware } from './security/security.middleware';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [
+  imports: [ 
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 80
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env.development',

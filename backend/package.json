@@ -24,6 +24,7 @@
   "dependencies": {
     "@argent/get-starknet": "^6.4.7",
     "@nestjs-modules/ioredis": "^2.0.2",
+    "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.0.12",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.12",
@@ -52,7 +53,8 @@
     "rxjs": "^7.8.1",
     "starknet": "5.18.0",
     "swagger-ui-express": "^5.0.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

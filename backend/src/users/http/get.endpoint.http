@@ -1,6 +1,7 @@
 #Get all users 
-GET http://localhost:3000/users
+GET http://localhost:3000/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiQWhtYWRvZ28iLCJpYXQiOjE3NDU2MTMyMTcsImV4cCI6MTc0NTYxNDExN30.kIuzSQg2nqTszA87wyqdfH-k-AcINwK6aGK4uJaK-aM
 
 
 #Get a single user by his ID 
-GET http://localhost:3000/users/1
+GET http://localhost:3000/users
