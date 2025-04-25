@@ -29,8 +29,10 @@ import {
 } from '@nestjs/swagger';
 import { ProgressTrackingService } from '../progress/progess-tracking.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Serialize } from 'src/common/decorators/serialize.decorator';
+import { UserResponseDto } from './dto/user-response.dto';
 
-@ApiTags('Users')
+@ApiTags('Users') 
 @Controller('users')
 export class UserController {
   constructor(
@@ -39,6 +41,7 @@ export class UserController {
   ) {}
 
   @UseGuards(AuthGuard('jwt'))
+  @Serialize(UserResponseDto) //for data serialization
   @Get('profile')
   @ApiBearerAuth() // Requires JWT authentication
   @UseGuards(JwtAuthGuard)
@@ -65,7 +68,7 @@ export class UserController {
     return this.usersService.updateProfile(user.id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard) 
   @Patch('me/profile')
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiBearerAuth()
@@ -110,7 +113,7 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'User not found' })
   deleteUser(@Param('id') id: number) {
     return this.usersService.deleteUser(id);
-  }
+  } 
 
   @Get(':me/progress/')
   @ApiOperation({ summary: 'Get user progress statistics' })

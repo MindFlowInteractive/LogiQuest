@@ -56,7 +56,8 @@ export class ProfileCustomizationDto {
   bio: string;
 }
 
-@Exclude()
+// @Exclude()
+@Expose()
 export class UserResponseDto {
   @Expose()
   id: number;
@@ -66,6 +67,9 @@ export class UserResponseDto {
 
   @Expose()
   email: string;
+
+  @Exclude()
+  password: string
 
   @Expose()
   walletAddress: string | null;
