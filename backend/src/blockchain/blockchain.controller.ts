@@ -2,21 +2,21 @@ import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { BlockchainService } from './blockchain.service';
 
 interface SendNFTRewardDto {
-  userId: string;
+  userId: number;
   tokenId: string;
   contractAddress: string;
   metadata: any;
 }
 
 interface SendTokenRewardDto {
-  userId: string;
+  userId: number;
   amount: string;
   contractAddress: string;
   metadata: any;
 }
 
 interface TrackAchievementDto {
-  userId: string;
+  userId: number;
   achievementId: string;
   metadata: any;
 }
