@@ -60,7 +60,7 @@ private setupMockBlockchain() {
 }
 
   async sendNFTReward(
-    userId: string,
+    userId: number,
     tokenId: string,
     contractAddress: string,
     metadata: any,
@@ -96,7 +96,7 @@ private setupMockBlockchain() {
       );
 
       // Update transaction with pending tx hash
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         txHash: tx.hash,
         status: TransactionStatus.PROCESSING,
       });
@@ -105,7 +105,7 @@ private setupMockBlockchain() {
       const receipt = await tx.wait();
 
       // Update transaction with confirmed details
-      return this.transactionsService.update(transaction.id, {
+      return this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.COMPLETED,
         blockNumber: receipt.blockNumber,
       });
@@ -116,7 +116,7 @@ private setupMockBlockchain() {
       );
 
       // Update transaction as failed
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.FAILED,
         metadata: {
           ...transaction.metadata,
@@ -129,7 +129,7 @@ private setupMockBlockchain() {
   }
 
   async sendTokenReward(
-    userId: string,
+    userId: number,
     amount: string,
     contractAddress: string,
     metadata: any,
@@ -162,7 +162,7 @@ private setupMockBlockchain() {
       );
 
       // Update transaction with pending tx hash
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         txHash: tx.hash,
         status: TransactionStatus.PROCESSING,
       });
@@ -171,7 +171,7 @@ private setupMockBlockchain() {
       const receipt = await tx.wait();
 
       // Update transaction with confirmed details
-      return this.transactionsService.update(transaction.id, {
+      return this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.COMPLETED,
         blockNumber: receipt.blockNumber,
       });
@@ -182,7 +182,7 @@ private setupMockBlockchain() {
       );
 
       // Update transaction as failed
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.FAILED,
         metadata: {
           ...transaction.metadata,
@@ -195,7 +195,7 @@ private setupMockBlockchain() {
   }
 
   async trackAchievement(
-    userId: string,
+    userId: number,
     achievementId: string,
     metadata: any,
   ): Promise<Transaction> {
@@ -255,7 +255,7 @@ private setupMockBlockchain() {
 
         if (currentStatus !== transaction.status) {
           await this.transactionsService.updateTransactionStatus(
-            transaction.id,
+            String(transaction.id),
             currentStatus,
           );
 
