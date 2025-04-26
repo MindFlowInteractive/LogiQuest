@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Puzzle } from '../puzzles/entities/puzzle.entity';
-import type { PuzzleDifficulty } from '../puzzles/entities/puzzle.entity';
+import { PuzzleDifficulty } from '../puzzles/entities/puzzle.entity';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class CategoryService {
   constructor(
+
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
+
     @InjectRepository(Puzzle)
     private readonly puzzleRepository: Repository<Puzzle>,
   ) {}
@@ -14,6 +19,8 @@ export class CategoryService {
   // List all available categories
   async listCategories(): Promise<string[]> {
     const queryBuilder = this.puzzleRepository.createQueryBuilder('puzzle');
+    await this.cacheManager.del('GET-/categories'); // invalidate
+
     const categories = await queryBuilder
       .select('DISTINCT(puzzle.category)', 'category')
       .getRawMany();

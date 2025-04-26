@@ -1,5 +1,7 @@
 #Get all steps 
 GET http://localhost:3000/steps
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MjEzMDgsImV4cCI6MTc0NTQyMjIwOH0.kBRgI6UBVHO9gi4T0-wkIpGpdbuoIrxyGMRiRRxUjXI
+
 
 
 

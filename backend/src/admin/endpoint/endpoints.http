@@ -1,0 +1,132 @@
+@baseUrl = http://localhost:3000/api
+@adminToken = {{login.response.body.access_token}}
+
+### Admin Login
+# @name login
+POST {{baseUrl}}/admin/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "secure_password"
+}
+
+### Check Admin Access
+GET {{baseUrl}}/admin
+Authorization: Bearer {{adminToken}}
+
+### Create New Quiz
+POST {{baseUrl}}/admin/quizzes
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "New Science Quiz",
+  "description": "Test your knowledge of basic science",
+  "category": "science",
+  "difficulty": "medium",
+  "questions": [
+    {
+      "text": "What is the chemical symbol for water?",
+      "options": [
+        {
+          "text": "H2O",
+          "isCorrect": true
+        },
+        {
+          "text": "CO2",
+          "isCorrect": false
+        },
+        {
+          "text": "NaCl",
+          "isCorrect": false
+        },
+        {
+          "text": "O2",
+          "isCorrect": false
+        }
+      ],
+      "explanation": "Water is composed of two hydrogen atoms and one oxygen atom."
+    }
+  ]
+}
+
+### Get All Quizzes
+GET {{baseUrl}}/admin/quizzes
+Authorization: Bearer {{adminToken}}
+
+### Get Quiz by ID
+GET {{baseUrl}}/admin/quizzes/quiz_id_here
+Authorization: Bearer {{adminToken}}
+
+### Update Quiz
+PUT {{baseUrl}}/admin/quizzes/quiz_id_here
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Updated Science Quiz",
+  "description": "An updated quiz about basic science concepts"
+}
+
+### Delete Quiz
+DELETE {{baseUrl}}/admin/quizzes/quiz_id_here
+Authorization: Bearer {{adminToken}}
+
+### Bulk Import Questions
+POST {{baseUrl}}/admin/quizzes/quiz_id_here/bulk-import
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+[
+  {
+    "text": "What is the largest planet in our solar system?",
+    "options": [
+      {
+        "text": "Jupiter",
+        "isCorrect": true
+      },
+      {
+        "text": "Saturn",
+        "isCorrect": false
+      },
+      {
+        "text": "Earth",
+        "isCorrect": false
+      },
+      {
+        "text": "Neptune",
+        "isCorrect": false
+      }
+    ],
+    "explanation": "Jupiter is the largest planet in our solar system."
+  }
+]
+
+### Get User Listing
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{adminToken}}
+
+### Get User by ID
+GET {{baseUrl}}/admin/users/user_id_here
+Authorization: Bearer {{adminToken}}
+
+### Get Dashboard Analytics
+GET {{baseUrl}}/admin/analytics
+Authorization: Bearer {{adminToken}}
+
+### Get User Statistics
+GET {{baseUrl}}/admin/analytics/users
+Authorization: Bearer {{adminToken}}
+
+### Get Quiz Statistics
+GET {{baseUrl}}/admin/analytics/quizzes
+Authorization: Bearer {{adminToken}}
+
+### Get User Engagement
+GET {{baseUrl}}/admin/analytics/engagement
+Authorization: Bearer {{adminToken}}
+
+### Export Analytics Data
+GET {{baseUrl}}/admin/analytics/export
+Authorization: Bearer {{adminToken}}

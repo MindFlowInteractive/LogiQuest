@@ -118,4 +118,25 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }
+
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.usersService.findByEmail(email)
+
+    if (!user) {
+      throw new UnauthorizedException("Invalid credentials")
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException("Invalid credentials")
+    }
+
+    if (user.role !== "admin") {
+      throw new UnauthorizedException("Access denied: Admin privileges required")
+    }
+
+    const { password: _, ...result } = user
+    return result
+  }
 }

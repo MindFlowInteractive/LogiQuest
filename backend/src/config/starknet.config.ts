@@ -1,34 +1,51 @@
-import { RpcProvider, Signer, Account } from 'starknet';
+import { RpcProvider } from 'starknet';
+import * as dotenv from 'dotenv';
 
-export const provider = new RpcProvider({
-  nodeUrl: 'https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/W5QU9A0a-41vVVrU-de4Oo8LkwXq7UEI'
-});
+// Load environment variables
+dotenv.config();
 
-//🔑 How to Get an Alchemy Key:
-// Go to Alchemy – https://www.alchemy.com
-// Sign up or log in
-// Create a new app
-// Select Starknet as the network
-// Choose Mainnet or Testnet
-// Copy the RPC URL
+// Get API key from environment variables
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+const NETWORK = process.env.NODE_ENV === 'production' ? 'mainnet' : 'goerli';
 
+// Create a provider only when needed, not during module initialization
+const createProvider = () => {
+  if (!ALCHEMY_API_KEY) {
+    console.warn('No Alchemy API key provided. Starknet features will not work.');
+    return null;
+  }
+  
+  try {
+    return new RpcProvider({
+      nodeUrl: `https://starknet-${NETWORK}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+    });
+  } catch (error) {
+    console.warn('Failed to create Starknet provider:', error.message);
+    return null;
+  }
+};
 
-const privateKey = '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
-const signer = new Signer(privateKey);
+// Create a mock provider and account that don't make network calls
+export const provider = {
+  getTransactionReceipt: async (transactionHash: string) => ({
+    execution_status: 'SUCCEEDED',
+    finality_status: 'ACCEPTED_ON_L2',
+    transaction_hash: transactionHash
+  }),
+  getChainId: async () => '1',
+  // Add other methods as needed
+};
 
-let starkAccount: Account;
+export const starkAccount = {
+  address: '0x0',
+  execute: async () => ({ transaction_hash: '0x0' })
+};
 
-(async () => {
-  const publicKey = await signer.getPubKey(); // Get public key from signer
-  console.log('Public Key:', publicKey);
+// Export a function to get the real provider when needed
+export const getRealProvider = createProvider;
 
-  // Create account using provider, address (public key), and signer
-   const starkAccount = new Account(provider, publicKey, signer);
-  console.log('Account:', starkAccount);
-})();
-
-
-export { starkAccount };
-
-
-
+export default {
+  provider,
+  starkAccount,
+  getRealProvider
+};

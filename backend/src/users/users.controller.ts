@@ -1,16 +1,23 @@
 import {
   Controller,
   Get,
-  Patch,
+  Post,
   Body,
+  Patch,
+  UseInterceptors,
+  UploadedFile,
   UseGuards,
+  Request,
   Param,
   Delete,
-  Post,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { MulterFile } from 'src/common/types/multer.types';
 import { AuthGuard } from '@nestjs/passport';
-import { UpdateProfileDto } from './dto/update-profile-dto.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ReqUser } from 'src/auth/common/decorator/get-user.decorator';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,26 +29,21 @@ import {
 } from '@nestjs/swagger';
 import { ProgressTrackingService } from '../progress/progess-tracking.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Serialize } from 'src/common/decorators/serialize.decorator';
+import { UserResponseDto } from './dto/user-response.dto';
 
-@ApiTags('Users') // Groups this controller under "Users" in Swagger
-@Controller('api/users')
+@ApiTags('Users') 
+@Controller('users')
 export class UserController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly progressTrackingServices: ProgressTrackingService,
+    private readonly progressTrackingService: ProgressTrackingService,
   ) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'User created successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
-  }
-
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
+  @Serialize(UserResponseDto) //for data serialization
   @Get('profile')
-  // @ApiBearerAuth() // Requires JWT authentication
+  @ApiBearerAuth() // Requires JWT authentication
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get authenticated user profile' })
   @ApiResponse({
@@ -66,9 +68,11 @@ export class UserController {
     return this.usersService.updateProfile(user.id, dto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Patch('change-password')
+  @UseGuards(JwtAuthGuard) 
+  @Patch('me/profile')
+  @ApiOperation({ summary: 'Update current user profile' })
   @ApiBearerAuth()
+
   @ApiOperation({ summary: 'Change user password' })
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
@@ -77,8 +81,9 @@ export class UserController {
     return this.usersService.changePassword(user.id, dto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Delete('deactivate')
+  @UseGuards(JwtAuthGuard)
+  @Post('me/avatar')
+  @ApiOperation({ summary: 'Upload user avatar' })
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Deactivate user account' })
   @ApiResponse({ status: 200, description: 'Account deactivated successfully' })
@@ -108,7 +113,7 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'User not found' })
   deleteUser(@Param('id') id: number) {
     return this.usersService.deleteUser(id);
-  }
+  } 
 
   @Get(':me/progress/')
   @ApiOperation({ summary: 'Get user progress statistics' })
@@ -117,7 +122,7 @@ export class UserController {
     description: 'Returns overall user progress statistics',
   })
   async getTrackingUserProgress(@Param('me') me: string) {
-    return this.progressTrackingServices.getUserProgress(me);
+    return this.progressTrackingService.getUserProgress(me);
   }
 
   @Get('me/categories/progress')
@@ -127,6 +132,6 @@ export class UserController {
     description: 'Returns progress statistics for each category',
   })
   async getCategoryProgress(userId: string) {
-    return this.progressTrackingServices.getCategoryProgress(userId);
+    return this.progressTrackingService.getCategoryProgress(userId);
   }
 }

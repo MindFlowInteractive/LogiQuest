@@ -3,11 +3,11 @@ import { AchievementsService } from './achievements.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Achievements')
-@Controller('achievements')
+@Controller('users/me')
 export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}
 
-  @Get('users/me/achievements')
+  @Get('achievements')
   @ApiOperation({ summary: 'Fetch user achievements' })
   @ApiResponse({
     status: 200,

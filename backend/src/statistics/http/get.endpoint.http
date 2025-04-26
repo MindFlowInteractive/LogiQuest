@@ -1,5 +1,5 @@
 @host = http://localhost:3000/api/users/me
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NDliMDkzOS0zNzM0LTQwYzEtODFhNi05ZWYzOTIwMTg0ODgiLCJ1c2VybmFtZSI6ImxqdHdwIiwiaWF0IjoxNzQyOTY1MjExLCJleHAiOjE3NDI5NjYxMTF9.h0mi9TXhWZkox9NyDFPohm5p2-kTBxBfPHTED-AXfIw
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MTk4NDIsImV4cCI6MTc0NTQyMDc0Mn0.mO0EGGn5hwaRFkSNH6Q-TWehJt8uUgBuw2dUUXvABfk
 
 ### Get user profile with basic statistics
 GET {{host}}/profile

@@ -1,13 +1,38 @@
-#Post a new puzzle
 POST http://localhost:3000/puzzles
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MTgzNTEsImV4cCI6MTc0NTQxOTI1MX0.WWWetJO4jaSl1bYYN7Z1YE2V49oqsdrv9get17z-j0A
+
 {
-  "id": ,
-  "title": "",
-  "description": "",
-  "difficulty": "",
-  "points": "",
-  "metadata": "",
-  "steps": "", 
-  
+  "title": "Solar System Challenge",
+  "description": "Test your knowledge about our solar system",
+  "difficulty": "hard",
+  "points": 100,
+  "category": "science",
+  "metadata": {
+    "subcategory": "astronomy",
+    "tags": ["space", "planets", "solar system"]
+  },
+  "steps": [
+    {
+      "description": "Which planet has the most moons in our solar system?",
+      "order": 1,
+      "hints": ["This gas giant has prominent rings", "It's the second-largest planet in our solar system"],
+      "correctAnswer": "Saturn",
+      "options": ["Jupiter", "Saturn", "Uranus", "Neptune"]
+    },
+    {
+      "description": "What is the largest planet in our solar system?",
+      "order": 2,
+      "hints": ["It has a great red spot", "It's the fifth planet from the sun"],
+      "correctAnswer": "Jupiter",
+      "options": ["Earth", "Jupiter", "Saturn", "Neptune"]
+    },
+    {
+      "description": "Which planet is known as the 'Red Planet'?",
+      "order": 3,
+      "hints": ["It has two small moons", "The fourth planet from the sun"],
+      "correctAnswer": "Mars",
+      "options": ["Venus", "Mars", "Mercury", "Jupiter"]
+    }
+  ]
 }

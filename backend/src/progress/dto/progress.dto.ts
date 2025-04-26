@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsNumber, IsBoolean, Min, Max } from 'class-validator';
+import { IsNumber, IsBoolean, Min, Max, IsString, IsArray, IsOptional, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -46,4 +46,38 @@ export class ProgressResponseDto {
   constructor(partial: Partial<ProgressResponseDto>) {
     Object.assign(this, partial);
   }
+}
+
+export class CreateProgressDto {
+  @ApiProperty({ description: 'User ID' })
+  @IsNumber()
+  userId: number;
+
+  @ApiProperty({ description: 'Chain ID' })
+  @IsNumber()
+  chainId: number;
+
+  @ApiProperty({ description: 'Progress status', example: 'not_started, in_progress, completed' })
+  @IsString()
+  status: string;
+
+  @ApiProperty({ description: 'Array of completed step IDs', type: [Number] })
+  @IsArray()
+  @IsOptional()
+  completedSteps?: number[];
+
+  @ApiProperty({ description: 'Current step index' })
+  @IsNumber()
+  @IsOptional()
+  currentStep?: number;
+
+  @ApiProperty({ description: 'Progress start time' })
+  @IsDateString()
+  @IsOptional()
+  startedAt?: string;
+
+  @ApiProperty({ description: 'Progress completion time' })
+  @IsDateString()
+  @IsOptional()
+  completedAt?: string;
 }

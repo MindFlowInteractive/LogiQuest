@@ -1,18 +1,14 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateProfileDto } from './dto/update-profile-dto.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/user-response.dto';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 import { plainToClass } from 'class-transformer';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -55,6 +51,7 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const newUser: User = {
+      id: null, // Default value for 'id'
       ...createUserDto,
       walletAddress: createUserDto.walletAddress || '',
       totalScore: 0,
@@ -78,6 +75,15 @@ export class UsersService {
         weekly: [],
         monthly: [],
       },
+      userQuizzes: [], // Default empty array for userQuizzes
+      role: 'user', // Default role as 'user'
+      isActive: true, // Default isActive to true
+      displayName: createUserDto.username || '',
+      bio: '',
+      avatarUrl: '',
+      profileVisibility: 'public',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     const user = this.usersRepository.create(newUser);
     this.usersRepository.save(user);

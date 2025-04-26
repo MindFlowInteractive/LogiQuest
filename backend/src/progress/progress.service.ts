@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProgressResponseDto } from './dto/progress.dto';
+import { CreateProgressDto, ProgressResponseDto } from './dto/progress.dto';
 import { ChainProgress } from './entities/chain.progress.entity';
 
 @Injectable()
@@ -25,6 +25,10 @@ export class ProgressService {
     };
   }
 
+  async create(createProgressDto: CreateProgressDto) {
+  const progress = this.progressRepository.create(createProgressDto);
+  return await this.progressRepository.save(progress);
+}
   async updateChainProgress(
     userId: number,
     chainId: number,

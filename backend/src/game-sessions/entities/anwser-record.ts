@@ -19,7 +19,5 @@ export class AnswerRecord {
   
     @ApiProperty({ description: 'Points earned for this answer' })
     pointsAwarded: number;
-  
-    // @ApiProperty({ description: 'Difficulty level of this question' })
-    // difficultyLevel: number;
+
   }

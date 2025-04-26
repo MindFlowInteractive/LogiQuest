@@ -46,8 +46,37 @@ cd logicquest
    ```bash
    git push origin feature-name
    ```
+### 7 Dependency Management - Dependency Locking
 
-### 7. Submit a Pull Request that properly describes your changes
+
+We use strict dependency locking to ensure consistent builds across all environments.
+
+- **Never** run `npm install` to add packages. Instead, use:
+  ```bash
+  npm install <package-name> --save-exact
+  ```
+- **Always** commit the `package-lock.json` file along with your changes.
+- When pulling from the repository, use `npm ci` instead of `npm install` to ensure exact dependency versions are installed.
+- If you encounter dependency conflicts, do not use `--force` or `--legacy-peer-deps` without discussing with the team first.
+
+### Version Management
+- Major version updates (e.g., NestJS 10.x to 11.x) should be planned and coordinated with the team.
+- Ensure all related packages use compatible versions. For example:
+   - All NestJS packages should use the same major version
+   - Starknet and related packages should use compatible versions
+
+### Before Submitting a PR
+- Run `npm ls --json > /dev/null` to verify dependency tree integrity
+- Run `npm audit` to check for security vulnerabilities
+- Make sure your code works with the locked dependencies
+
+```
+Copy
+```
+
+You can expand or modify this based on your team's specific needs and practices.
+
+### 8. Submit a Pull Request that properly describes your changes
 
 
 ## Code of Conduct
@@ -59,8 +88,62 @@ cd logicquest
 - Ensure all tests pass.
 - Request reviews from maintainers, when you submit a PR.
 
+## Starknet Development Setup
 
+For Starknet integration, contributors need to:
 
+1. Create an Alchemy account and set up a Starknet Goerli (testnet) app
+2. Generate a test wallet for development (never use real wallets with funds)
+3. Copy the API key and wallet information to your .env file
+
+### Generating a test wallet
+
+You can generate a test wallet using:
+- Argent X browser extension (switch to testnet)
+- Braavos wallet (switch to testnet)
+- Programmatically using starknet.js (see documentation)
+
+## Generating Starknet Test Keys
+
+To generate a Starknet private key and address for development:
+
+```bash
+npm run generate-starknet-key
+```
+This approach provides a convenient way for contributors to generate test keys without having to write code themselves, and keeps the key generation separate from your main application code.
+
+Note: Always use testnet for development and never commit private keys to the repository.
+
+## Blockchain Configuration
+
+LogiQuest uses blockchain technology for NFT rewards and achievements. For development purposes, you'll need:
+
+### Ethereum Configuration (for NFT rewards)
+
+1. **Get an Ethereum RPC URL**:
+   - Sign up for a free account on [Alchemy](https://www.alchemy.com/) or [Infura](https://infura.io/)
+   - Create a new app and select Ethereum Goerli testnet
+   - Copy the HTTP URL provided
+
+2. **Generate an Ethereum private key** (for development only):
+   - Use an online generator like [vanity-eth](https://vanity-eth.tk/)
+   - Or generate using ethers.js: `const { Wallet } = require('ethers'); console.log(Wallet.createRandom().privateKey);`
+   - Always use testnet for development and never share private keys
+
+### Starknet Configuration (for blockchain interactions)
+
+1. **Get a Starknet API key**:
+   - Sign up for an Alchemy account
+   - Create a new app selecting Starknet Goerli testnet
+   - Copy your API key
+
+2. **Generate a Starknet wallet**:
+   - Use Argent X or Braavos browser extension to create a testnet wallet
+   - Fund it with testnet tokens from the Starknet faucet
+
+Add these values to your `.env` file based on the template in `.env.example`.
+
+**Note:** The application includes fallback mock implementations for development, so blockchain configuration is optional for contributors not working directly on blockchain features.
 
 ## License
 

@@ -1,12 +1,11 @@
-#Create a steps 
-
 POST http://localhost:3000/steps
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE3NDU0MjEzMDgsImV4cCI6MTc0NTQyMjIwOH0.kBRgI6UBVHO9gi4T0-wkIpGpdbuoIrxyGMRiRRxUjXI
 
 {
- "id": ,
- "description": "",
- "order": "",
- "hints": "",
- "puzzle": ""
+  "description": "Which planet has the most moons in our solar system?",
+  "order": 1,
+  "hints": ["This gas giant has prominent rings", "It's the second-largest planet in our solar system"],
+  "correctAnswer": "Saturn",
+  "options": ["Jupiter", "Saturn", "Uranus", "Neptune"]
 }

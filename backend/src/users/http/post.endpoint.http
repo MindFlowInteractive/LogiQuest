@@ -1,14 +1,14 @@
 #Create a user 
 
-POST http://localhost:3002/users 
+POST http://localhost:3000/users 
 Content-Type: application:json
 
   {
     "id": ,
-    "username": "name",
-    "email": "email@user.com",
-    "password":"Mozen@kad1",
-    "walletAddress": "123",
+    "username": "Ahmadogo",
+    "email": "ahmadogo@gmail.com",
+    "password":"Ahmad@01",
+    "walletAddress": "1234512345",
     "createdAt": "" ,
     "updatedAt": ""
   }

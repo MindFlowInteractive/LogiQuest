@@ -22,18 +22,45 @@ export class BlockchainService {
     this.initializeBlockchain();
   }
 
-  private initializeBlockchain() {
+private initializeBlockchain() {
+  try {
     const rpcUrl = this.configService.get<string>('BLOCKCHAIN_RPC_URL');
     const privateKey = this.configService.get<string>('BLOCKCHAIN_PRIVATE_KEY');
 
+    // Check if config values are provided
+    if (!rpcUrl || !privateKey) {
+      this.logger.warn('Blockchain configuration missing. Using mock implementation.');
+      this.setupMockBlockchain();
+      return;
+    }
+
+    // Try to create real provider and wallet
     this.provider = new ethers.JsonRpcProvider(rpcUrl);
     this.wallet = new ethers.Wallet(privateKey, this.provider);
-
-    this.logger.log('Blockchain service initialized');
+    this.logger.log('Blockchain service initialized with real implementation');
+  } catch (error) {
+    this.logger.warn(`Failed to initialize blockchain with real implementation: ${error.message}`);
+    this.setupMockBlockchain();
   }
+}
+
+private setupMockBlockchain() {
+  // Create mock provider and wallet for development
+  this.provider = {
+    getTransaction: async () => ({ blockNumber: 1 }),
+    getTransactionReceipt: async () => ({ status: 1 }),
+  } as any;
+
+  this.wallet = {
+    address: '0xMockWalletAddress',
+    connect: () => this.wallet,
+  } as any;
+
+  this.logger.log('Blockchain service initialized with mock implementation');
+}
 
   async sendNFTReward(
-    userId: string,
+    userId: number,
     tokenId: string,
     contractAddress: string,
     metadata: any,
@@ -69,7 +96,7 @@ export class BlockchainService {
       );
 
       // Update transaction with pending tx hash
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         txHash: tx.hash,
         status: TransactionStatus.PROCESSING,
       });
@@ -78,7 +105,7 @@ export class BlockchainService {
       const receipt = await tx.wait();
 
       // Update transaction with confirmed details
-      return this.transactionsService.update(transaction.id, {
+      return this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.COMPLETED,
         blockNumber: receipt.blockNumber,
       });
@@ -89,7 +116,7 @@ export class BlockchainService {
       );
 
       // Update transaction as failed
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.FAILED,
         metadata: {
           ...transaction.metadata,
@@ -102,7 +129,7 @@ export class BlockchainService {
   }
 
   async sendTokenReward(
-    userId: string,
+    userId: number,
     amount: string,
     contractAddress: string,
     metadata: any,
@@ -135,7 +162,7 @@ export class BlockchainService {
       );
 
       // Update transaction with pending tx hash
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         txHash: tx.hash,
         status: TransactionStatus.PROCESSING,
       });
@@ -144,7 +171,7 @@ export class BlockchainService {
       const receipt = await tx.wait();
 
       // Update transaction with confirmed details
-      return this.transactionsService.update(transaction.id, {
+      return this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.COMPLETED,
         blockNumber: receipt.blockNumber,
       });
@@ -155,7 +182,7 @@ export class BlockchainService {
       );
 
       // Update transaction as failed
-      await this.transactionsService.update(transaction.id, {
+      await this.transactionsService.update(String(transaction.id), {
         status: TransactionStatus.FAILED,
         metadata: {
           ...transaction.metadata,
@@ -168,7 +195,7 @@ export class BlockchainService {
   }
 
   async trackAchievement(
-    userId: string,
+    userId: number,
     achievementId: string,
     metadata: any,
   ): Promise<Transaction> {
@@ -228,7 +255,7 @@ export class BlockchainService {
 
         if (currentStatus !== transaction.status) {
           await this.transactionsService.updateTransactionStatus(
-            transaction.id,
+            String(transaction.id),
             currentStatus,
           );
 

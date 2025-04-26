@@ -22,7 +22,6 @@ export class AchievementsService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    // private readonly walletService: WalletService,
 
     private readonly starknetService: StarknetService,
     private readonly progressionHandler: ProgressionHandler,
@@ -116,7 +115,6 @@ export class AchievementsService {
       achievement.unlockedAt = new Date();
       
       // Connect Wallet
-    // const wallet = await this.walletService.connectWallet();
     
       // Mint NFT
       const metadata = {

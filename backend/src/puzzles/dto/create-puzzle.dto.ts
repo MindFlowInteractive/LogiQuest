@@ -56,11 +56,6 @@ export class CreatePuzzleDto {
   @Min(0)
   points: number;
 
-  // @ApiProperty({
-  //   type: 'object',
-  //   description: 'Additional information related to the puzzle',
-  //   example: { type: 'image', url: 'https://example.com/puzzle-image.jpg' },
-  // })
   @IsOptional()
   metadata?: Record<string, any>;
 

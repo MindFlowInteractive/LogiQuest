@@ -1,9 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { useContext } from 'react';
 // import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
-// import AuthContext from '../../contexts/AuthContext';
-// import AppContext from '../../contexts/AppContext';
 
 const api = import.meta.env.VITE_API_URL
 
