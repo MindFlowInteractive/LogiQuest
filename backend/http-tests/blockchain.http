@@ -1,0 +1,59 @@
+# @name sendNFTReward
+POST {{baseUrl}}/blockchain/nft-reward
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "userId": 1,
+  "tokenId": "123",
+  "contractAddress": "0x123...",
+  "metadata": {
+    "achievement": "quiz_master",
+    "level": "expert"
+  }
+}
+
+###
+
+# @name sendTokenReward
+POST {{baseUrl}}/blockchain/token-reward
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "userId": 1,
+  "amount": "100",
+  "contractAddress": "0x456...",
+  "metadata": {
+    "reason": "quiz_completion",
+    "difficulty": "hard"
+  }
+}
+
+###
+
+# @name trackAchievement
+POST {{baseUrl}}/blockchain/achievement
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "userId": 1,
+  "achievementId": "quiz_master_100",
+  "metadata": {
+    "completedQuizzes": 100,
+    "averageScore": 95
+  }
+}
+
+###
+
+# @name getTransactionStatus
+GET {{baseUrl}}/blockchain/transaction-status/0x789...
+Authorization: Bearer {{token}}
+
+###
+
+# @name syncTransactions
+POST {{baseUrl}}/blockchain/sync-transactions
+Authorization: Bearer {{token}} 

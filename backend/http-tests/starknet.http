@@ -1,0 +1,15 @@
+# @name getTransactionStatus
+GET {{baseUrl}}/starknet/transaction/0x123...
+Authorization: Bearer {{token}}
+
+###
+
+# @name getTransactionStatusInvalid
+GET {{baseUrl}}/starknet/transaction/invalid_hash
+Authorization: Bearer {{token}}
+
+###
+
+# @name getTransactionStatusNotFound
+GET {{baseUrl}}/starknet/transaction/0x456...
+Authorization: Bearer {{token}} 

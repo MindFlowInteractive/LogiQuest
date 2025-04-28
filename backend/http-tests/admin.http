@@ -1,0 +1,39 @@
+# @name adminLogin
+POST {{baseUrl}}/api/admin/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@example.com",
+  "password": "secure_password"
+}
+
+###
+
+# @name checkAdminAccess
+GET {{baseUrl}}/api/admin
+Authorization: Bearer {{token}}
+
+###
+
+# @name createAdmin
+POST {{baseUrl}}/api/admin/create
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "email": "newadmin@example.com",
+  "password": "new_secure_password",
+  "role": "admin"
+}
+
+###
+
+# @name updateAdmin
+PATCH {{baseUrl}}/api/admin/update
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "email": "updatedadmin@example.com",
+  "password": "updated_secure_password"
+} 

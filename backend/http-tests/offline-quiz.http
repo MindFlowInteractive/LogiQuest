@@ -1,0 +1,46 @@
+# @name createOfflineQuiz
+POST {{baseUrl}}/offline-quiz
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Logic Puzzles",
+  "description": "A collection of challenging logic puzzles",
+  "questions": [
+    {
+      "question": "What comes next in the sequence?",
+      "options": ["A", "B", "C", "D"],
+      "correctAnswer": "B"
+    }
+  ]
+}
+
+###
+
+# @name findAllOfflineQuizzes
+GET {{baseUrl}}/offline-quiz
+Authorization: Bearer {{token}}
+
+###
+
+# @name findOneOfflineQuiz
+GET {{baseUrl}}/offline-quiz/1
+Authorization: Bearer {{token}}
+
+###
+
+# @name updateOfflineQuiz
+PATCH {{baseUrl}}/offline-quiz/1
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Updated Logic Puzzles",
+  "description": "An updated collection of challenging logic puzzles"
+}
+
+###
+
+# @name removeOfflineQuiz
+DELETE {{baseUrl}}/offline-quiz/1
+Authorization: Bearer {{token}} 

@@ -1,0 +1,72 @@
+# @name findAllQuizzes
+GET {{baseUrl}}/api/admin/quizzes?page=1&limit=10&category=logic&difficulty=medium&isActive=true
+Authorization: Bearer {{token}}
+
+###
+
+# @name findOneQuiz
+GET {{baseUrl}}/api/admin/quizzes/1
+Authorization: Bearer {{token}}
+
+###
+
+# @name createQuiz
+POST {{baseUrl}}/api/admin/quizzes
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Logic Mastery",
+  "description": "Test your logical reasoning skills",
+  "category": "logic",
+  "difficulty": "medium",
+  "questions": [
+    {
+      "question": "What comes next in the sequence?",
+      "options": ["A", "B", "C", "D"],
+      "correctAnswer": "B",
+      "explanation": "The pattern follows..."
+    }
+  ]
+}
+
+###
+
+# @name updateQuiz
+PUT {{baseUrl}}/api/admin/quizzes/1
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Advanced Logic Mastery",
+  "description": "Advanced logical reasoning challenges",
+  "difficulty": "hard"
+}
+
+###
+
+# @name deleteQuiz
+DELETE {{baseUrl}}/api/admin/quizzes/1
+Authorization: Bearer {{token}}
+
+###
+
+# @name bulkImportQuestions
+POST {{baseUrl}}/api/admin/quizzes/1/bulk-import
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+[
+  {
+    "question": "New Question 1",
+    "options": ["A", "B", "C", "D"],
+    "correctAnswer": "A",
+    "explanation": "Explanation 1"
+  },
+  {
+    "question": "New Question 2",
+    "options": ["A", "B", "C", "D"],
+    "correctAnswer": "B",
+    "explanation": "Explanation 2"
+  }
+] 

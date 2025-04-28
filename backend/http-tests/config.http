@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+# Login credentials
+@adminEmail = admin@example.com
+@adminPassword = secure_password
+
+# Common headers
+@headers = {
+  "Content-Type": {{contentType}},
+  "Authorization": "Bearer {{token}}"
+}
+
+# Common response variables
+@response = {{$response}}
+@status = {{$response.status}}
+@body = {{$response.body}}
+
+# @name login
+# @prompt email
+# @prompt password
+POST {{baseUrl}}/api/admin/login
+Content-Type: {{contentType}}
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.global.set("token", response.body.access_token);
+%}
+
+# @name autoLogin
+POST {{baseUrl}}/api/admin/login
+Content-Type: {{contentType}}
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+  client.global.set("token", response.body.access_token);
+%}

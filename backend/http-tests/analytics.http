@@ -1,0 +1,27 @@
+# @name getDashboardStats
+GET {{baseUrl}}/api/admin/analytics
+Authorization: Bearer {{token}}
+
+###
+
+# @name getUserStats
+GET {{baseUrl}}/api/admin/analytics/users
+Authorization: Bearer {{token}}
+
+###
+
+# @name getQuizStats
+GET {{baseUrl}}/api/admin/analytics/quizzes
+Authorization: Bearer {{token}}
+
+###
+
+# @name getUserEngagement
+GET {{baseUrl}}/api/admin/analytics/engagement
+Authorization: Bearer {{token}}
+
+###
+
+# @name exportData
+GET {{baseUrl}}/api/admin/analytics/export
+Authorization: Bearer {{token}} 
