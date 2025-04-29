@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -83,11 +87,11 @@ export class UsersService {
       avatarUrl: '',
       profileVisibility: 'public',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
     const user = this.usersRepository.create(newUser);
     this.usersRepository.save(user);
-    console.log(user)
+    console.log(user);
     return plainToClass(UserResponseDto, newUser, {
       excludeExtraneousValues: true,
     });
@@ -145,7 +149,7 @@ export class UsersService {
   ): Promise<{ message: string }> {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      select: ['id', 'password'], 
+      select: ['id', 'password'],
     });
     if (!user) throw new NotFoundException('User not found');
 
@@ -191,6 +195,37 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
     return { message: 'User deleted successfully' };
+  }
+
+  async findOne(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      select: [
+        'id',
+        'username',
+        'email',
+        'displayName',
+        'bio',
+        'avatarUrl',
+        'profileVisibility',
+        'walletAddress',
+        'totalScore',
+        'statistics',
+        'categoryProficiency',
+        'performanceHistory',
+        'profileCustomization',
+        'createdAt',
+        'updatedAt',
+        'role',
+        'isActive',
+      ],
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    return user;
   }
 
   async updateUserStatistics(
