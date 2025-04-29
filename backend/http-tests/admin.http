@@ -1,39 +1,37 @@
-# @name adminLogin
-POST {{baseUrl}}/api/admin/login
-Content-Type: {{contentType}}
-
-{
-  "email": "admin@example.com",
-  "password": "secure_password"
-}
-
-###
-
-# @name checkAdminAccess
-GET {{baseUrl}}/api/admin
-Authorization: Bearer {{token}}
-
-###
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
 
 # @name createAdmin
 POST {{baseUrl}}/api/admin/create
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 Content-Type: {{contentType}}
 
 {
-  "email": "newadmin@example.com",
-  "password": "new_secure_password",
+  "email": "newadmin@logiquest.dev",
+  "password": "Admin123!",
   "role": "admin"
 }
 
-###
-
-# @name updateAdmin
-PATCH {{baseUrl}}/api/admin/update
-Authorization: Bearer {{token}}
+### Check admin access Check admin access
+# @name checkAdminAccess# @name checkAdminAccess
+GET {{baseUrl}}/api/admin/admin
+Authorization: Bearer {{global.token}}ken}}
 Content-Type: {{contentType}}
 
-{
-  "email": "updatedadmin@example.com",
-  "password": "updated_secure_password"
-} 
+### Update admin### Update admin
+# @name updateAdmin @name updateAdmin
+PATCH {{baseUrl}}/api/admin/1
+Authorization: Bearer {{global.token}}}}
+Content-Type: {{contentType}}ontentType}}
+
+{{
+  "email": "updated@logiquest.dev",email": "updated@logiquest.dev",
+  "password": "UpdatedAdmin123!"  "password": "UpdatedAdmin123!"
+}
+
+### Delete admin
+# @name deleteAdmin
+DELETE {{baseUrl}}/api/admin/1DELETE {{baseUrl}}/api/admin/1
+Authorization: Bearer {{global.token}}uthorization: Bearer {{global.token}}
+Content-Type: {{contentType}}

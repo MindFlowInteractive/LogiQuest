@@ -1,15 +1,28 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
 # @name getGlobalLeaderboard
-GET {{baseUrl}}/api/leaderboards/global?period=all-time&page=1&limit=10
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/api/leaderboards/global
+    ?period=all-time
+    &page=1
+    &limit=10
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
 
-###
-
+### Get category leaderboard
 # @name getCategoryLeaderboard
-GET {{baseUrl}}/api/leaderboards/categories/logic?period=weekly&page=1&limit=10
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/api/leaderboards/categories/logic
+    ?period=weekly
+    &page=1
+    &limit=10
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
 
-###
-
+### Get user rank
 # @name getUserRank
-GET {{baseUrl}}/api/leaderboards/users/me/rank?period=all-time&category=logic
-Authorization: Bearer {{token}} 
+GET {{baseUrl}}/api/leaderboards/users/me/rank
+    ?period=all-time
+    &category=logic
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}

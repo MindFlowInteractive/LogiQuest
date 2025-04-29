@@ -1,37 +1,9 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
-
-# Login credentials
-@adminEmail = admin@example.com
-@adminPassword = secure_password
-
-# Common headers
-@headers = {
-  "Content-Type": {{contentType}},
-  "Authorization": "Bearer {{token}}"
-}
-
-# Common response variables
-@response = {{$response}}
-@status = {{$response.status}}
-@body = {{$response.body}}
+@adminEmail = admin@logiquest.dev
+@adminPassword = Admin123!
 
 # @name login
-# @prompt email
-# @prompt password
-POST {{baseUrl}}/api/admin/login
-Content-Type: {{contentType}}
-
-{
-  "email": "{{email}}",
-  "password": "{{password}}"
-}
-
-> {%
-  client.global.set("token", response.body.access_token);
-%}
-
-# @name autoLogin
 POST {{baseUrl}}/api/admin/login
 Content-Type: {{contentType}}
 
@@ -41,5 +13,17 @@ Content-Type: {{contentType}}
 }
 
 > {%
-  client.global.set("token", response.body.access_token);
+    client.log("Response received: " + response.status);
+    if (response && response.body && response.body.access_token) {
+        client.global.set("token", response.body.access_token);
+        client.log("Token set successfully");
+    } else {
+        client.log("No token in response");
+        client.log("Response body: " + JSON.stringify(response.body));
+    }
 %}
+
+### Test the token works
+GET {{baseUrl}}/api/admin
+Content-Type: {{contentType}}
+Authorization: Bearer {{global.token}}

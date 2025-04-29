@@ -1,6 +1,10 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
 # @name sendNFTReward
 POST {{baseUrl}}/blockchain/nft-reward
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 Content-Type: {{contentType}}
 
 {
@@ -13,11 +17,9 @@ Content-Type: {{contentType}}
   }
 }
 
-###
-
-# @name sendTokenReward
+### Send token reward
 POST {{baseUrl}}/blockchain/token-reward
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 Content-Type: {{contentType}}
 
 {
@@ -30,11 +32,9 @@ Content-Type: {{contentType}}
   }
 }
 
-###
-
-# @name trackAchievement
+### Track achievement
 POST {{baseUrl}}/blockchain/achievement
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 Content-Type: {{contentType}}
 
 {
@@ -46,14 +46,10 @@ Content-Type: {{contentType}}
   }
 }
 
-###
-
-# @name getTransactionStatus
+### Get transaction status
 GET {{baseUrl}}/blockchain/transaction-status/0x789...
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 
-###
-
-# @name syncTransactions
+### Sync transactions
 POST {{baseUrl}}/blockchain/sync-transactions
-Authorization: Bearer {{token}} 
+Authorization: Bearer {{global.token}}

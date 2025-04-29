@@ -1,6 +1,10 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
 # @name createOfflineQuiz
 POST {{baseUrl}}/offline-quiz
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 Content-Type: {{contentType}}
 
 {
@@ -15,23 +19,22 @@ Content-Type: {{contentType}}
   ]
 }
 
-###
-
+### Find all offline quizzes
 # @name findAllOfflineQuizzes
 GET {{baseUrl}}/offline-quiz
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
 
-###
-
+### Get specific offline quiz
 # @name findOneOfflineQuiz
 GET {{baseUrl}}/offline-quiz/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
 
-###
-
+### Update offline quiz
 # @name updateOfflineQuiz
 PATCH {{baseUrl}}/offline-quiz/1
-Authorization: Bearer {{token}}
+Authorization: Bearer {{global.token}}
 Content-Type: {{contentType}}
 
 {
@@ -39,8 +42,8 @@ Content-Type: {{contentType}}
   "description": "An updated collection of challenging logic puzzles"
 }
 
-###
-
+### Delete offline quiz
 # @name removeOfflineQuiz
 DELETE {{baseUrl}}/offline-quiz/1
-Authorization: Bearer {{token}} 
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
