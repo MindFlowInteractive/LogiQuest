@@ -31,6 +31,11 @@ import { ProgressTrackingService } from '../progress/progess-tracking.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Serialize } from 'src/common/decorators/serialize.decorator';
 import { UserResponseDto } from './dto/user-response.dto';
+import { Abac } from '../auth/decorators/abac.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Permissions } from '../auth/decorators/permissions.decorator';
+import { AuthorizationGuard } from '../auth/guards/authorization.guard';
+import { PERMISSION } from '../auth/constants/permissions.const';
 
 @ApiTags('Users') 
 @Controller('users')

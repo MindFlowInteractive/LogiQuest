@@ -1,8 +1,12 @@
 import { TransactionsModule } from 'src/transactions/transactions.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -31,12 +35,18 @@ import { ApiUsageMiddleware } from './middleware/api-usage.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityMiddleware } from './security/security.middleware';
 import { CacheModule } from '@nestjs/cache-manager';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Permission } from './auth/entities/permission.entity';
+import { Role } from './auth/entities/role.entity';
+import { User } from './users/entities/user.entity';
+import { AuthorizationGuard } from './auth/guards/authorization.guard';
+import { AuthorizationMiddleware } from './auth/middlewares/authorization.middleware';
 
 @Module({
-  imports: [ 
+  imports: [
     CacheModule.register({
       isGlobal: true,
-      ttl: 80
+      ttl: 80,
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -49,7 +59,7 @@ import { CacheModule } from '@nestjs/cache-manager';
         limit: 10,
       },
     ]),
-      JwtModule.registerAsync({
+    JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
@@ -57,12 +67,14 @@ import { CacheModule } from '@nestjs/cache-manager';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
+
+    // Application Modules
     UsersModule,
     PuzzlesModule,
     StepsModule,
     GameSessionsModule,
     AchievementsModule,
-    AuthModule,
     ProgressModule,
     StarknetModule,
     DatabaseModule,
@@ -85,24 +97,39 @@ import { CacheModule } from '@nestjs/cache-manager';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    // Removing the RolesGuard from global providers
-    // as we'll handle authorization in middleware
+    {
+      provide: APP_GUARD,
+      useClass: AuthorizationGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(AuthMiddleware)
+      // Auth middleware first to attach user to request
+      // .apply(AuthMiddleware)
+      // .exclude(
+      //   { path: 'auth/register', method: RequestMethod.POST },
+      //   { path: 'auth/login', method: RequestMethod.POST },
+      //   { path: 'api-docs', method: RequestMethod.GET },
+      //   { path: 'api-docs/:path', method: RequestMethod.GET },
+      // )
+      // .forRoutes('*')
+
+      // Then authorization middleware
+      .apply(AuthorizationMiddleware)
       .exclude(
         { path: 'auth/register', method: RequestMethod.POST },
         { path: 'auth/login', method: RequestMethod.POST },
         { path: 'api-docs', method: RequestMethod.GET },
-        { path: 'api-docs/:path', method: RequestMethod.GET }
+        { path: 'api-docs/:path', method: RequestMethod.GET },
       )
       .forRoutes('*')
+
+      // Then other middlewares
       .apply(ApiUsageMiddleware)
       .forRoutes('*')
-      .apply(SecurityMiddleware) 
+      .apply(SecurityMiddleware)
       .forRoutes('*');
   }
 }

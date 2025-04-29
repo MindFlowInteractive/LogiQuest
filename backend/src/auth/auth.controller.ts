@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
 import { RefreshTokenDto } from './dto/refresh-token-dto.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Authentication') // This groups your controller under the "Authentication" tag
 @Controller('auth')
@@ -11,6 +12,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
+  @Public()
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: RegisterDto }) // Describes the body for the 'register' endpoint
   @ApiResponse({ status: 201, description: 'User registered successfully.' })
@@ -20,6 +22,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Public()
   @ApiOperation({ summary: 'Login an existing user' })
   @ApiBody({ type: LoginDto }) // Describes the body for the 'login' endpoint
   @ApiResponse({
@@ -32,6 +35,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
   @Post('refresh')
+  @Public()
   refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto);
   }
