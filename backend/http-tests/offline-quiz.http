@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
+# @name createOfflineQuiz
+POST {{baseUrl}}/offline-quiz
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Logic Puzzles",
+  "description": "A collection of challenging logic puzzles",
+  "questions": [
+    {
+      "question": "What comes next in the sequence?",
+      "options": ["A", "B", "C", "D"],
+      "correctAnswer": "B"
+    }
+  ]
+}
+
+### Find all offline quizzes
+# @name findAllOfflineQuizzes
+GET {{baseUrl}}/offline-quiz
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Get specific offline quiz
+# @name findOneOfflineQuiz
+GET {{baseUrl}}/offline-quiz/1
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Update offline quiz
+# @name updateOfflineQuiz
+PATCH {{baseUrl}}/offline-quiz/1
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Updated Logic Puzzles",
+  "description": "An updated collection of challenging logic puzzles"
+}
+
+### Delete offline quiz
+# @name removeOfflineQuiz
+DELETE {{baseUrl}}/offline-quiz/1
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}

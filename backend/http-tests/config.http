@@ -1,0 +1,29 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@adminEmail = admin@logiquest.dev
+@adminPassword = Admin123!
+
+# @name login
+POST {{baseUrl}}/api/admin/login
+Content-Type: {{contentType}}
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+    client.log("Response received: " + response.status);
+    if (response && response.body && response.body.access_token) {
+        client.global.set("token", response.body.access_token);
+        client.log("Token set successfully");
+    } else {
+        client.log("No token in response");
+        client.log("Response body: " + JSON.stringify(response.body));
+    }
+%}
+
+### Test the token works
+GET {{baseUrl}}/api/admin
+Content-Type: {{contentType}}
+Authorization: Bearer {{global.token}}

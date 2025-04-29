@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
+### Get Transaction Status
+# @name getTransactionStatus
+GET {{baseUrl}}/starknet/transaction/0x123...
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Get Invalid Transaction Status
+# @name getTransactionStatusInvalid
+GET {{baseUrl}}/starknet/transaction/invalid_hash
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Get Non-existent Transaction Status
+# @name getTransactionStatusNotFound
+GET {{baseUrl}}/starknet/transaction/0x456...
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Submit Transaction
+# @name submitTransaction
+POST {{baseUrl}}/starknet/transaction
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+{
+  "transactionHash": "0x789...",
+  "type": "DEPLOY",
+  "status": "PENDING"
+}
+
+### Get Transaction Receipt
+# @name getTransactionReceipt
+GET {{baseUrl}}/starknet/transaction/0x789.../receipt
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}

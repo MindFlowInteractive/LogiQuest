@@ -1,0 +1,23 @@
+{
+  "env": {
+    "default": {
+      "baseUrl": "http://localhost:3000",
+      "contentType": "application/json"
+    },
+    "development": {
+      "baseUrl": "http://localhost:3000",
+      "contentType": "application/json"
+    },
+    "staging": {
+      "baseUrl": "https://staging-api.logiquest.dev",
+      "contentType": "application/json"
+    }
+  },
+  "validateCertificates": false,
+  "followRedirects": true,
+  "timeout": 5000,
+  "log": {
+    "level": "info",
+    "prettyPrint": true
+  }
+}

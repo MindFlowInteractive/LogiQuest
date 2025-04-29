@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
+### Get Dashboard Statistics
+# @name getDashboardStats
+GET {{baseUrl}}/api/admin/analytics
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Get User Statistics
+# @name getUserStats
+GET {{baseUrl}}/api/admin/analytics/users
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Get Quiz Statistics
+# @name getQuizStats
+GET {{baseUrl}}/api/admin/analytics/quizzes
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Get User Engagement Metrics
+# @name getUserEngagement
+GET {{baseUrl}}/api/admin/analytics/engagement
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+### Export Analytics Data
+# @name exportData
+GET {{baseUrl}}/api/admin/analytics/export
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}

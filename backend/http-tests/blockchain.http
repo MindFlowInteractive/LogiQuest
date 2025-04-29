@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@import config.http
+
+# @name sendNFTReward
+POST {{baseUrl}}/blockchain/nft-reward
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+{
+  "userId": 1,
+  "tokenId": "123",
+  "contractAddress": "0x123...",
+  "metadata": {
+    "achievement": "quiz_master",
+    "level": "expert"
+  }
+}
+
+### Send token reward
+POST {{baseUrl}}/blockchain/token-reward
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+{
+  "userId": 1,
+  "amount": "100",
+  "contractAddress": "0x456...",
+  "metadata": {
+    "reason": "quiz_completion",
+    "difficulty": "hard"
+  }
+}
+
+### Track achievement
+POST {{baseUrl}}/blockchain/achievement
+Authorization: Bearer {{global.token}}
+Content-Type: {{contentType}}
+
+{
+  "userId": 1,
+  "achievementId": "quiz_master_100",
+  "metadata": {
+    "completedQuizzes": 100,
+    "averageScore": 95
+  }
+}
+
+### Get transaction status
+GET {{baseUrl}}/blockchain/transaction-status/0x789...
+Authorization: Bearer {{global.token}}
+
+### Sync transactions
+POST {{baseUrl}}/blockchain/sync-transactions
+Authorization: Bearer {{global.token}}
