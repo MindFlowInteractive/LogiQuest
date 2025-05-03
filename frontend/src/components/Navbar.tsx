@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-// import useAuth from "../hooks/useAuth";
-// import { signOut } from "../services/auth/GoogleAuthService";
+import { GameModeDropdown } from "./gameModes/GameModeDropdown";
 
 const navItems = [
     { label: 'Game Modes', href: '/game-modes' },
@@ -12,16 +11,8 @@ const navItems = [
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isGameModeDropdownOpen, setIsGameModeDropdownOpen] = useState(false); // State for dropdown
     const location = useLocation();
-    // const user = useAuth(); // Get the authenticated user
-
-    // const handleSignOut = async () => {
-    //   try {
-    //     await signOut();
-    //   } catch (error) {
-    //     console.error("Error during sign out:", error);
-    //   }
-    // };
 
     return (
         <nav className="bg-[#033330] fixed top-0 left-0 z-50 w-full">
@@ -40,36 +31,29 @@ export default function Navbar() {
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
                         {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                to={item.href}
-                                className={`text-white hover:text-gray-300 font-medium text-xl transition-colors ${location.pathname === item.href ? "font-semibold" : ""
-                                    }`}
-                            >
-                                {item.label}
-                            </Link>
+                            <div key={item.href} className="relative">
+                                {item.label === 'Game Modes' ? (
+                                    <button
+                                        onClick={() => setIsGameModeDropdownOpen(!isGameModeDropdownOpen)}
+                                        className={`text-white hover:text-gray-300 font-medium text-xl transition-colors ${location.pathname === item.href ? "font-semibold" : ""
+                                            }`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ) : (
+                                    <Link
+                                        to={item.href}
+                                        className={`text-white hover:text-gray-300 font-medium text-xl transition-colors ${location.pathname === item.href ? "font-semibold" : ""
+                                            }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                )}
+                                {item.label === 'Game Modes' && isGameModeDropdownOpen && (
+                                    <GameModeDropdown /> // Render the dropdown
+                                )}
+                            </div>
                         ))}
-                        {/* Sign-In or User Info */}
-                        {/* {user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-white font-medium text-xl">
-                  Welcome, {user.displayName}!
-                </span>
-                <button
-                  // onClick={handleSignOut}
-                  className="text-white hover:text-gray-300 font-medium text-xl transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/sign-in"
-                className="text-white hover:text-gray-300 font-medium text-xl transition-colors"
-              >
-                Sign In
-              </Link>
-            )} */}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -107,28 +91,6 @@ export default function Navbar() {
                                     {item.label}
                                 </Link>
                             ))}
-                            {/* Sign-In or User Info for Mobile */}
-                            {/* {user ? (
-                <div className="flex flex-col space-y-2">
-                  <span className="block px-3 py-2 text-white">
-                    Welcome, {user.displayName}!
-                  </span>
-                  <button
-                    onClick={handleSignOut}
-                    className="block px-3 py-2 rounded-md text-white hover:bg-[#004d43] transition-colors"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  to="/signin"
-                  className="block px-3 py-2 rounded-md text-white hover:bg-[#004d43] transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-              )} */}
                         </div>
                     </div>
                 )}
